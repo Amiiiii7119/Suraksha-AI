@@ -6,7 +6,6 @@ passlib[bcrypt]
 psycopg2-binary
 sqlalchemy
 pydantic
-ultralytics
 openai
 python-dotenv
-python_multipart
+python-multipart
