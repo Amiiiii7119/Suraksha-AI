@@ -56,7 +56,7 @@ MITIGATION_MAP = {
 # ─────────────────────────────────────────────
 # Schema
 # ─────────────────────────────────────────────
-from app.schemas import DetectionSchema
+from app.schemas.schemas import DetectionSchema
 
 # ─────────────────────────────────────────────
 # Connector Subject — stays alive until shutdown

@@ -1,7 +1,10 @@
-.env
-backend/.env
 venv/
 __pycache__/
+*.pyc
+.env
+backend.log
+runs/
+temp_uploads/
 datasets/
 *.pt
-*.onnx
+output/

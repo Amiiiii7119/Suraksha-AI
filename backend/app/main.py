@@ -1,4 +1,3 @@
-# app/main.py
 
 import os
 import shutil
@@ -14,19 +13,34 @@ from sqlalchemy import func, desc
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 
-from app.yolo_engine import YoloEngine
-from app.risk_engine import start_pathway, latest_risk_state, state_lock, subject
-from app.database import engine as db_engine, Base, SessionLocal
-from app.models import User, Incident
-from app.auth import (
+# Services
+from app.services.yolo_engine import YoloEngine
+from app.services.simulator import (
+    start_simulator,
+    stop_simulator,
+    simulator_status,
+)
+
+# Core
+from app.core.risk_engine import (
+    start_pathway,
+    latest_risk_state,
+    state_lock,
+    subject,
+)
+
+# Database
+from app.db.database import engine as db_engine, Base, SessionLocal
+from app.db.models import User, Incident
+
+# API utilities
+from api.auth_routes import (
     hash_password,
     verify_password,
     create_access_token,
     get_current_user,
     get_db,
 )
-from app.simulator import start_simulator, stop_simulator, simulator_status
-
 
 # ─────────────────────────────────────────────
 # Pydantic schemas

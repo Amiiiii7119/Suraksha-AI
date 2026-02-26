@@ -10,9 +10,9 @@ import random
 import time
 from datetime import datetime, timezone
 
-from app.risk_engine import subject
-from app.database import SessionLocal
-from app.models import Incident
+from app.core.risk_engine import subject
+from app.db.database import SessionLocal
+from app.db.models import Incident
 
 # ─────────────────────────────────────────────
 # Config
