@@ -1,5 +1,6 @@
 fastapi
 uvicorn
+cv2
 pathway==0.29.0
 python-jose
 passlib[bcrypt]
