@@ -1,7 +1,15 @@
 import os
 from datetime import datetime, timezone
 from typing import List, Dict, Any
-from ultralytics import YOLO
+class YoloEngine:
+    def __init__(self):
+        self.model = None
+
+    def load_model(self):
+        if self.model is None:
+            from ultralytics import YOLO
+            self.model = YOLO("yolov8n.pt")
+        return self.model
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
