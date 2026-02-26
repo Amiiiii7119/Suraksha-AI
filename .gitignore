@@ -1,0 +1,7 @@
+.env
+backend/.env
+venv/
+__pycache__/
+datasets/
+*.pt
+*.onnx

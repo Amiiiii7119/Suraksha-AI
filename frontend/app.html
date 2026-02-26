@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suraksha AI — Workplace Safety Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800;900&family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #FF2D2D;
+    --red-dim: #cc1e1e;
+    --yellow: #FFD600;
+    --green: #00FF94;
+    --bg: #080A0E;
+    --surface: #0F1117;
+    --surface2: #161B27;
+    --border: #1E2535;
+    --text: #E8EAF0;
+    --text-dim: #5A6480;
+    --text-mid: #8892B0;
+    --font-head: 'Syne', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-body: 'Inter', sans-serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--font-body); min-height:100vh; overflow-x:hidden; }
+
+  /* ── SCANLINE OVERLAY ── */
+  body::before {
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:9999;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,.015) 2px, rgba(255,255,255,.015) 4px);
+  }
+
+  /* ── NAV ── */
+  nav {
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    height:64px; background:rgba(8,10,14,.9); backdrop-filter:blur(16px);
+    border-bottom:1px solid var(--border);
+    display:flex; align-items:center; padding:0 24px; gap:32px;
+  }
+  .logo { font-family:var(--font-head); font-size:20px; font-weight:900; color:var(--red); letter-spacing:2px; white-space:nowrap; }
+  .logo span { color:var(--text); }
+  .nav-links { display:flex; gap:4px; flex:1; }
+  .nav-btn {
+    padding:8px 16px; border:none; background:transparent; color:var(--text-mid);
+    font-family:var(--font-mono); font-size:11px; font-weight:700; letter-spacing:1px;
+    cursor:pointer; transition:all .2s; border-radius:4px; text-transform:uppercase;
+  }
+  .nav-btn:hover { color:var(--text); background:var(--surface2); }
+  .nav-btn.active { color:var(--red); background:rgba(255,45,45,.08); }
+  .nav-status { display:flex; align-items:center; gap:8px; font-family:var(--font-mono); font-size:11px; color:var(--text-dim); }
+  .pulse-dot { width:8px; height:8px; border-radius:50%; background:var(--green); animation:pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
+
+  /* ── PAGES ── */
+  .page { display:none; padding:80px 24px 40px; max-width:1400px; margin:0 auto; }
+  .page.active { display:block; }
+
+  /* ── SECTION HEADER ── */
+  .section-header { margin-bottom:32px; }
+  .section-label { font-family:var(--font-mono); font-size:11px; color:var(--red); letter-spacing:3px; margin-bottom:8px; }
+  .section-title { font-family:var(--font-head); font-size:36px; font-weight:900; color:var(--text); letter-spacing:-1px; }
+
+  /* ── CARDS ── */
+  .card {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:8px; padding:24px;
+  }
+  .card-title { font-family:var(--font-mono); font-size:11px; font-weight:700; color:var(--text-dim); letter-spacing:2px; margin-bottom:16px; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    padding:12px 24px; border:none; border-radius:6px; cursor:pointer;
+    font-family:var(--font-mono); font-size:12px; font-weight:700; letter-spacing:1px;
+    transition:all .2s; text-transform:uppercase;
+  }
+  .btn-red { background:var(--red); color:#fff; }
+  .btn-red:hover { background:var(--red-dim); transform:translateY(-1px); box-shadow:0 4px 16px rgba(255,45,45,.3); }
+  .btn-ghost { background:transparent; color:var(--text-dim); border:1px solid var(--border); }
+  .btn-ghost:hover { border-color:var(--red); color:var(--red); }
+  .btn-green { background:var(--green); color:#000; }
+  .btn-green:hover { opacity:.9; }
+
+  /* ── TAGS ── */
+  .tag { display:inline-block; padding:4px 10px; border-radius:4px; font-family:var(--font-mono); font-size:10px; font-weight:700; letter-spacing:1px; }
+  .tag-red { background:rgba(255,45,45,.15); color:var(--red); border:1px solid rgba(255,45,45,.3); }
+  .tag-yellow { background:rgba(255,214,0,.1); color:var(--yellow); border:1px solid rgba(255,214,0,.3); }
+  .tag-green { background:rgba(0,255,148,.1); color:var(--green); border:1px solid rgba(0,255,148,.3); }
+
+  /* ─────────────────────────────── DASHBOARD ─────────────────────────────── */
+  .metrics-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+  .metric-card {
+    background:var(--surface); border:1px solid var(--border); border-radius:8px;
+    padding:20px; position:relative; overflow:hidden;
+  }
+  .metric-card::after {
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg, transparent, var(--red), transparent);
+    opacity:0; transition:.3s;
+  }
+  .metric-card:hover::after { opacity:1; }
+  .metric-label { font-family:var(--font-mono); font-size:10px; color:var(--text-dim); letter-spacing:2px; margin-bottom:8px; }
+  .metric-value { font-family:var(--font-mono); font-size:32px; font-weight:700; color:var(--text); }
+  .metric-sub { font-family:var(--font-mono); font-size:10px; color:var(--text-dim); margin-top:4px; }
+  .metric-trend { position:absolute; top:20px; right:20px; font-family:var(--font-mono); font-size:12px; }
+  .trend-up { color:var(--red); }
+  .trend-down { color:var(--green); }
+
+  .risk-bar-container { margin-bottom:24px; }
+  .risk-bar-label { display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:11px; color:var(--text-dim); margin-bottom:8px; }
+  .risk-bar-track { height:8px; background:var(--surface2); border-radius:4px; overflow:hidden; }
+  .risk-bar-fill { height:100%; border-radius:4px; transition:width 1s ease; }
+
+  .dashboard-grid { display:grid; grid-template-columns:2fr 1fr; gap:16px; }
+  .events-list { display:flex; flex-direction:column; gap:8px; max-height:320px; overflow-y:auto; }
+  .events-list::-webkit-scrollbar { width:4px; }
+  .events-list::-webkit-scrollbar-track { background:var(--surface2); }
+  .events-list::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+  .event-item {
+    display:flex; align-items:center; gap:12px;
+    padding:12px 16px; background:var(--surface2); border-radius:6px;
+    border-left:3px solid transparent; transition:.2s;
+    animation: slideIn .3s ease;
+  }
+  @keyframes slideIn { from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:none} }
+  .event-item.critical { border-left-color:var(--red); }
+  .event-item.medium { border-left-color:var(--yellow); }
+  .event-item.low { border-left-color:var(--green); }
+  .event-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .event-dot.critical { background:var(--red); box-shadow:0 0 6px var(--red); }
+  .event-dot.medium { background:var(--yellow); box-shadow:0 0 6px var(--yellow); }
+  .event-dot.low { background:var(--green); box-shadow:0 0 6px var(--green); }
+  .event-text { flex:1; font-size:13px; color:var(--text); }
+  .event-zone { font-family:var(--font-mono); font-size:10px; color:var(--text-dim); }
+  .event-time { font-family:var(--font-mono); font-size:10px; color:var(--text-dim); white-space:nowrap; }
+
+  .pathway-panel {
+    background:var(--surface); border:1px solid var(--border); border-radius:8px;
+    padding:20px; border-top:2px solid var(--green);
+  }
+  .pathway-label { font-family:var(--font-mono); font-size:10px; color:var(--green); letter-spacing:2px; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+  .pathway-stream { font-family:var(--font-mono); font-size:11px; color:var(--text-dim); line-height:1.8; max-height:240px; overflow-y:auto; }
+  .pathway-stream::-webkit-scrollbar { width:3px; }
+  .pathway-stream::-webkit-scrollbar-thumb { background:var(--green); opacity:.3; border-radius:2px; }
+  .pathway-line { padding:2px 0; border-bottom:1px solid rgba(255,255,255,.03); }
+  .pathway-line.new { color:var(--green); animation:fadeGreen 2s ease forwards; }
+  @keyframes fadeGreen { 0%{color:var(--green)} 100%{color:var(--text-dim)} }
+  .pathway-ts { color:var(--text-dim); }
+  .pathway-event { color:var(--yellow); }
+  .pathway-score { color:var(--red); }
+
+  /* ─────────────────────────────── DETECTION ─────────────────────────────── */
+  .detect-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .upload-zone {
+    border:2px dashed var(--border); border-radius:8px; padding:48px 32px;
+    text-align:center; cursor:pointer; transition:all .3s;
+    background:var(--surface); position:relative; overflow:hidden;
+  }
+  .upload-zone:hover, .upload-zone.dragover {
+    border-color:var(--red); background:rgba(255,45,45,.05);
+  }
+  .upload-zone input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; }
+  .upload-icon { font-size:48px; margin-bottom:16px; }
+  .upload-title { font-family:var(--font-head); font-size:20px; font-weight:700; color:var(--text); margin-bottom:8px; }
+  .upload-sub { font-size:13px; color:var(--text-dim); }
+  .upload-formats { display:flex; gap:8px; justify-content:center; margin-top:16px; flex-wrap:wrap; }
+  .upload-preview { margin-top:16px; border-radius:6px; overflow:hidden; max-height:300px; }
+  .upload-preview img, .upload-preview video { width:100%; border-radius:6px; max-height:280px; object-fit:contain; }
+
+  .detect-result { display:flex; flex-direction:column; gap:16px; }
+  .result-header { display:flex; justify-content:space-between; align-items:center; }
+  .violations-list { display:flex; flex-direction:column; gap:8px; max-height:300px; overflow-y:auto; }
+  .violation-item {
+    display:flex; align-items:center; gap:12px;
+    padding:12px; background:var(--surface2); border-radius:6px;
+  }
+  .violation-icon { font-size:20px; }
+  .violation-name { flex:1; font-size:13px; font-weight:600; color:var(--text); }
+  .confidence-bar { height:4px; background:var(--border); border-radius:2px; margin-top:4px; overflow:hidden; }
+  .confidence-fill { height:100%; border-radius:2px; background:var(--red); }
+  .violation-conf { font-family:var(--font-mono); font-size:11px; color:var(--text-dim); }
+
+  .no-result {
+    flex:1; display:flex; align-items:center; justify-content:center;
+    flex-direction:column; gap:16px; padding:48px; text-align:center;
+    background:var(--surface2); border-radius:8px;
+  }
+  .no-result-icon { font-size:48px; opacity:.3; }
+  .no-result-text { color:var(--text-dim); font-size:14px; }
+
+  /* ── RESULTS REDESIGN ── */
+  .result-hero {
+    position:relative; border-radius:12px; overflow:hidden;
+    background:linear-gradient(135deg, #0a0c10 0%, #12151f 100%);
+    border:1px solid var(--border); padding:32px; margin-bottom:16px;
+  }
+  .result-hero::before {
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(ellipse at 50% 0%, rgba(255,45,45,.12) 0%, transparent 70%);
+  }
+  .result-gauge {
+    display:flex; align-items:center; gap:32px;
+  }
+  .gauge-ring { position:relative; flex-shrink:0; }
+  .gauge-ring svg { transform:rotate(-90deg); filter:drop-shadow(0 0 12px rgba(255,45,45,.4)); }
+  .gauge-ring-text {
+    position:absolute; inset:0; display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+  }
+  .gauge-score { font-family:var(--font-mono); font-size:22px; font-weight:700; line-height:1; }
+  .gauge-label { font-family:var(--font-mono); font-size:9px; color:var(--text-dim); letter-spacing:1px; margin-top:2px; }
+  .result-stats { flex:1; display:flex; flex-direction:column; gap:12px; }
+  .result-stat-row { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:rgba(255,255,255,.03); border-radius:6px; border-left:2px solid transparent; }
+  .result-stat-row.danger { border-left-color:var(--red); }
+  .result-stat-row.warn { border-left-color:var(--yellow); }
+  .result-stat-row.safe { border-left-color:var(--green); }
+  .result-stat-label { font-family:var(--font-mono); font-size:10px; color:var(--text-dim); letter-spacing:1px; }
+  .result-stat-val { font-family:var(--font-mono); font-size:16px; font-weight:700; }
+
+  .viol-card {
+    display:flex; align-items:center; gap:14px;
+    padding:14px 16px; border-radius:8px;
+    background:rgba(255,255,255,.02); border:1px solid var(--border);
+    transition:.2s; margin-bottom:8px;
+  }
+  .viol-card:hover { background:rgba(255,255,255,.04); border-color:rgba(255,45,45,.3); }
+  .viol-badge {
+    width:44px; height:44px; border-radius:8px; display:flex;
+    align-items:center; justify-content:center; font-size:22px; flex-shrink:0;
+  }
+  .viol-badge.fire { background:rgba(255,107,45,.15); border:1px solid rgba(255,107,45,.3); }
+  .viol-badge.smoke { background:rgba(150,150,180,.1); border:1px solid rgba(150,150,180,.3); }
+  .viol-badge.helmet { background:rgba(255,45,45,.15); border:1px solid rgba(255,45,45,.3); }
+  .viol-badge.vest { background:rgba(255,214,0,.1); border:1px solid rgba(255,214,0,.3); }
+  .viol-badge.zone { background:rgba(168,85,247,.1); border:1px solid rgba(168,85,247,.3); }
+  .viol-badge.unknown { background:rgba(100,100,100,.1); border:1px solid rgba(100,100,100,.3); }
+  .viol-info { flex:1; }
+  .viol-name { font-size:13px; font-weight:700; color:var(--text); margin-bottom:4px; }
+  .viol-meta { font-size:11px; color:var(--text-dim); }
+  .viol-conf-wrap { text-align:right; }
+  .viol-conf-pct { font-family:var(--font-mono); font-size:16px; font-weight:700; }
+  .viol-conf-bar { width:60px; height:3px; background:var(--border); border-radius:2px; margin-top:4px; overflow:hidden; }
+  .viol-conf-fill { height:100%; border-radius:2px; }
+
+  /* ── LIVE CAMERA ── */
+  .live-camera-panel {
+    background:var(--surface); border:1px solid var(--border); border-radius:8px;
+    overflow:hidden;
+  }
+  .live-cam-header {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:16px 20px; border-bottom:1px solid var(--border);
+    background:var(--surface2);
+  }
+  .live-feed-wrap {
+    position:relative; background:#000; min-height:280px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  #liveCamVideo { width:100%; max-height:340px; object-fit:cover; display:none; }
+  #liveCamCanvas { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; display:none; }
+  .live-placeholder {
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:12px; padding:48px; text-align:center;
+  }
+  .live-placeholder-icon { font-size:48px; opacity:.3; }
+  .live-cam-controls { padding:16px 20px; display:flex; gap:12px; align-items:center; }
+  .live-status-dot { width:10px; height:10px; border-radius:50%; background:var(--text-dim); }
+  .live-status-dot.active { background:var(--red); animation:pulse 1s infinite; box-shadow:0 0 8px var(--red); }
+  .live-detections { padding:0 20px 16px; max-height:200px; overflow-y:auto; }
+  .live-detection-item {
+    display:flex; align-items:center; gap:10px; padding:8px 12px;
+    background:var(--surface2); border-radius:6px; margin-bottom:6px;
+    border-left:3px solid var(--red); animation:slideIn .2s ease;
+  }
+
+  .progress-ring { width:120px; height:120px; position:relative; margin:0 auto; }
+  .progress-ring svg { transform:rotate(-90deg); }
+  .progress-ring-text { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; }
+
+  /* ─────────────────────────────── LEADERBOARD ─────────────────────────────── */
+  .podium { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:32px; align-items:end; }
+  .podium-card {
+    background:var(--surface); border:1px solid var(--border); border-radius:8px;
+    padding:24px; text-align:center; position:relative; overflow:hidden;
+  }
+  .podium-card.first {
+    border-color:rgba(255,214,0,.4);
+    background:linear-gradient(180deg, rgba(255,214,0,.06) 0%, var(--surface) 100%);
+    transform:translateY(-16px);
+  }
+  .podium-card.second { border-color:rgba(176,176,176,.3); }
+  .podium-card.third { border-color:rgba(205,127,50,.3); }
+  .podium-medal { font-size:40px; margin-bottom:12px; }
+  .podium-rank { font-family:var(--font-mono); font-size:10px; color:var(--text-dim); letter-spacing:2px; margin-bottom:4px; }
+  .podium-name { font-family:var(--font-head); font-size:18px; font-weight:800; color:var(--text); margin-bottom:4px; }
+  .podium-zone { font-size:12px; color:var(--text-dim); margin-bottom:16px; }
+  .podium-score { font-family:var(--font-mono); font-size:28px; font-weight:700; color:var(--yellow); }
+  .podium-score-label { font-family:var(--font-mono); font-size:10px; color:var(--text-dim); }
+  .podium-card.first .podium-score { color:var(--yellow); }
+  .podium-card.first::before {
+    content:''; position:absolute; inset:-2px; border-radius:9px;
+    background:linear-gradient(135deg,rgba(255,214,0,.3),transparent,rgba(255,214,0,.1));
+    z-index:0; pointer-events:none;
+  }
+
+  .lb-table { background:var(--surface); border:1px solid var(--border); border-radius:8px; overflow:hidden; }
+  .lb-table-header {
+    display:grid; grid-template-columns:60px 1fr 120px 100px 120px 80px;
+    padding:12px 20px; background:var(--surface2);
+    font-family:var(--font-mono); font-size:10px; color:var(--text-dim); letter-spacing:2px;
+    border-bottom:1px solid var(--border);
+  }
+  .lb-row {
+    display:grid; grid-template-columns:60px 1fr 120px 100px 120px 80px;
+    padding:16px 20px; border-bottom:1px solid var(--border);
+    transition:.2s; align-items:center;
+  }
+  .lb-row:last-child { border-bottom:none; }
+  .lb-row:hover { background:rgba(255,255,255,.02); }
+  .lb-rank { font-family:var(--font-mono); font-size:16px; font-weight:700; }
+  .lb-rank.top { color:var(--yellow); }
+  .lb-name { font-weight:600; color:var(--text); font-size:14px; }
+  .lb-zone { font-size:13px; color:var(--text-dim); }
+  .lb-scans { font-family:var(--font-mono); font-size:14px; color:var(--text); }
+  .lb-points { font-family:var(--font-mono); font-size:18px; font-weight:700; color:var(--yellow); }
+
+  .zone-battle { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-bottom:32px; }
+  .zone-card {
+    background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:20px;
+  }
+  .zone-name { font-family:var(--font-head); font-size:14px; font-weight:800; letter-spacing:1px; margin-bottom:12px; }
+  .zone-progress { height:6px; background:var(--surface2); border-radius:3px; overflow:hidden; margin-bottom:8px; }
+  .zone-progress-fill { height:100%; border-radius:3px; transition:width 1s ease; }
+  .zone-stats { display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:11px; color:var(--text-dim); }
+  .my-rank-card {
+    background:var(--surface); border:2px solid var(--red); border-radius:8px;
+    padding:24px; display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:32px;
+  }
+  .my-avatar {
+    width:48px; height:48px; border-radius:50%; background:var(--red);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-head); font-size:20px; font-weight:900; color:#fff;
+  }
+  .my-info { flex:1; padding:0 20px; }
+  .my-name { font-family:var(--font-head); font-size:20px; font-weight:800; }
+  .my-sub { font-size:13px; color:var(--text-dim); }
+  .my-points { text-align:right; }
+  .my-points-num { font-family:var(--font-mono); font-size:40px; font-weight:700; color:var(--yellow); }
+  .my-points-label { font-family:var(--font-mono); font-size:10px; color:var(--text-dim); letter-spacing:2px; }
+
+  /* ─────────────────────────────── PATHWAY LIVE ─────────────────────────────── */
+  .pathway-full {
+    display:grid; grid-template-columns:1fr 1fr; gap:24px;
+  }
+  .terminal {
+    background:#000; border:1px solid var(--green); border-radius:8px;
+    padding:20px; font-family:var(--font-mono); font-size:12px;
+    max-height:480px; overflow-y:auto;
+  }
+  .terminal::-webkit-scrollbar { width:4px; }
+  .terminal::-webkit-scrollbar-thumb { background:var(--green); border-radius:2px; }
+  .terminal-header { color:var(--green); margin-bottom:16px; border-bottom:1px solid rgba(0,255,148,.2); padding-bottom:8px; }
+  .t-line { color:#5A6480; line-height:1.7; }
+  .t-line .t-green { color:var(--green); }
+  .t-line .t-yellow { color:var(--yellow); }
+  .t-line .t-red { color:var(--red); }
+  .t-line .t-white { color:var(--text); }
+  .t-line.new-entry { animation:terminalNew .5s ease; }
+  @keyframes terminalNew { from{background:rgba(0,255,148,.1)} to{background:transparent} }
+
+  .pathway-metrics { display:flex; flex-direction:column; gap:16px; }
+  .pw-metric { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:20px; }
+  .pw-metric-title { font-family:var(--font-mono); font-size:10px; color:var(--green); letter-spacing:2px; margin-bottom:12px; }
+  .pw-metric-val { font-family:var(--font-mono); font-size:28px; font-weight:700; }
+  .pw-metric-desc { font-size:12px; color:var(--text-dim); margin-top:4px; }
+
+  .event-chart { display:flex; align-items:flex-end; gap:4px; height:80px; margin-top:8px; }
+  .chart-bar {
+    flex:1; border-radius:3px 3px 0 0; transition:height .5s ease;
+    background:linear-gradient(180deg, var(--red), rgba(255,45,45,.3));
+    min-height:2px;
+  }
+
+  /* ─────────────────────────────── AUTH ─────────────────────────────── */
+  .auth-overlay {
+    position:fixed; inset:0; background:rgba(8,10,14,.98); z-index:200;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .auth-box {
+    background:var(--surface); border:1px solid var(--border); border-radius:12px;
+    padding:48px; width:420px;
+  }
+  .auth-logo { font-family:var(--font-head); font-size:28px; font-weight:900; color:var(--red); margin-bottom:8px; letter-spacing:2px; }
+  .auth-sub { font-size:14px; color:var(--text-dim); margin-bottom:32px; }
+  .auth-field { margin-bottom:16px; }
+  .auth-label { font-family:var(--font-mono); font-size:10px; color:var(--text-dim); letter-spacing:2px; margin-bottom:6px; }
+  .auth-input {
+    width:100%; padding:12px 16px; background:var(--surface2); border:1px solid var(--border);
+    border-radius:6px; color:var(--text); font-family:var(--font-body); font-size:14px;
+    outline:none; transition:.2s;
+  }
+  .auth-input:focus { border-color:var(--red); }
+  .auth-error { color:var(--red); font-size:12px; margin-top:8px; display:none; }
+  .auth-toggle { margin-top:16px; text-align:center; font-size:13px; color:var(--text-dim); }
+  .auth-toggle span { color:var(--red); cursor:pointer; }
+  .loading-spinner {
+    width:16px; height:16px; border:2px solid rgba(255,255,255,.3);
+    border-top-color:#fff; border-radius:50%; animation:spin .8s linear infinite; display:none;
+  }
+  @keyframes spin { to{transform:rotate(360deg)} }
+
+  /* ─────────────────────────────── TOAST ─────────────────────────────── */
+  .toast-container { position:fixed; top:80px; right:24px; z-index:300; display:flex; flex-direction:column; gap:8px; }
+  .toast {
+    padding:12px 20px; border-radius:6px; font-family:var(--font-mono); font-size:12px;
+    border-left:3px solid; animation:toastIn .3s ease; max-width:320px;
+  }
+  .toast.success { background:#0a2a1a; border-color:var(--green); color:var(--green); }
+  .toast.error { background:#2a0a0a; border-color:var(--red); color:var(--red); }
+  .toast.info { background:#1a1a0a; border-color:var(--yellow); color:var(--yellow); }
+  @keyframes toastIn { from{opacity:0;transform:translateX(16px)} to{opacity:1;transform:none} }
+
+  /* ─────────────────────────────── MISC ─────────────────────────────── */
+  .flex { display:flex; }
+  .gap-16 { gap:16px; }
+  .gap-8 { gap:8px; }
+  .align-center { align-items:center; }
+  .justify-between { justify-content:space-between; }
+  .mt-16 { margin-top:16px; }
+  .mt-24 { margin-top:24px; }
+  .mb-16 { margin-bottom:16px; }
+  .mb-24 { margin-bottom:24px; }
+  .text-dim { color:var(--text-dim); }
+  .text-mono { font-family:var(--font-mono); }
+  .text-red { color:var(--red); }
+  .text-green { color:var(--green); }
+  .text-yellow { color:var(--yellow); }
+  .full-width { width:100%; }
+
+  .separator { height:1px; background:var(--border); margin:24px 0; }
+
+  .empty-state {
+    padding:60px 40px; text-align:center;
+    background:var(--surface2); border-radius:8px;
+  }
+  .empty-state-icon { font-size:48px; margin-bottom:16px; opacity:.4; }
+  .empty-state-title { font-family:var(--font-head); font-size:18px; font-weight:700; color:var(--text-dim); margin-bottom:8px; }
+  .empty-state-sub { font-size:13px; color:var(--text-dim); }
+
+  select.auth-input { appearance:none; }
+  .select-wrap { position:relative; }
+  .select-wrap::after {
+    content:'▼'; position:absolute; right:12px; top:50%; transform:translateY(-50%);
+    font-size:10px; color:var(--text-dim); pointer-events:none;
+  }
+
+  @media(max-width:900px) {
+    .metrics-grid { grid-template-columns:repeat(2,1fr); }
+    .dashboard-grid { grid-template-columns:1fr; }
+    .detect-grid { grid-template-columns:1fr; }
+    .pathway-full { grid-template-columns:1fr; }
+    .lb-table-header, .lb-row { grid-template-columns:50px 1fr 100px 100px; }
+    .lb-scans, .lb-status { display:none; }
+    .podium { grid-template-columns:1fr; }
+    .podium-card.first { transform:none; }
+    .zone-battle { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- AUTH OVERLAY -->
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-box">
+    <div class="auth-logo">SURAKSHA<span style="color:var(--text)"> AI</span></div>
+    <div class="auth-sub">Workplace Safety Intelligence Platform</div>
+
+    <!-- LOGIN FORM -->
+    <div id="loginForm">
+      <div class="auth-field">
+        <div class="auth-label">EMAIL ADDRESS</div>
+        <input class="auth-input" type="email" id="loginEmail" placeholder="admin@company.com" value="amteshwarrajsingh@gmail.com">
+      </div>
+      <div class="auth-field">
+        <div class="auth-label">PASSWORD</div>
+        <input class="auth-input" type="password" id="loginPassword" placeholder="••••••••" value="admin123">
+      </div>
+      <div class="auth-error" id="loginError">Invalid credentials. Please try again.</div>
+      <button class="btn btn-red full-width mt-16" style="display:flex;align-items:center;justify-content:center;gap:8px;" onclick="doLogin()">
+        <span>SIGN IN</span>
+        <div class="loading-spinner" id="loginSpinner"></div>
+      </button>
+      <div class="auth-toggle">Don't have an account? <span onclick="showRegister()">Create one</span></div>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div id="registerForm" style="display:none;">
+      <div class="auth-field">
+        <div class="auth-label">FULL NAME</div>
+        <input class="auth-input" type="text" id="regName" placeholder="Your Name">
+      </div>
+      <div class="auth-field">
+        <div class="auth-label">EMAIL ADDRESS</div>
+        <input class="auth-input" type="email" id="regEmail" placeholder="you@company.com">
+      </div>
+      <div class="auth-field">
+        <div class="auth-label">PASSWORD</div>
+        <input class="auth-input" type="password" id="regPassword" placeholder="••••••••">
+      </div>
+      <div class="auth-field">
+        <div class="auth-label">ROLE</div>
+        <div class="select-wrap">
+          <select class="auth-input" id="regRole">
+            <option value="viewer">Viewer</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+      </div>
+      <div class="auth-error" id="regError">Registration failed.</div>
+      <button class="btn btn-red full-width mt-16" style="display:flex;align-items:center;justify-content:center;gap:8px;" onclick="doRegister()">
+        <span>CREATE ACCOUNT</span>
+        <div class="loading-spinner" id="regSpinner"></div>
+      </button>
+      <div class="auth-toggle">Already have an account? <span onclick="showLogin()">Sign in</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">SURAKSHA<span> AI</span></div>
+  <div class="nav-links">
+    <button class="nav-btn active" onclick="showPage('dashboard',this)">DASHBOARD</button>
+    <button class="nav-btn" onclick="showPage('detection',this)">DETECTION</button>
+    <button class="nav-btn" onclick="showPage('leaderboard',this)">LEADERBOARD</button>
+    <button class="nav-btn" onclick="showPage('pathway',this)">PATHWAY LIVE</button>
+  </div>
+  <div class="nav-status">
+    <div class="pulse-dot"></div>
+    <span id="navStatus">LIVE</span>
+    <span style="margin-left:16px;cursor:pointer;color:var(--text-dim);" onclick="doLogout()">LOGOUT</span>
+  </div>
+</nav>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ═══════════════════════════════ DASHBOARD ═══════════════════════════════ -->
+<div class="page active" id="page-dashboard">
+  <div class="section-header">
+    <div class="section-label">REAL-TIME MONITORING</div>
+    <div class="section-title">Safety Dashboard</div>
+  </div>
+
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-label">RISK SCORE</div>
+      <div class="metric-value text-red" id="metricRisk">0.00</div>
+      <div class="metric-sub">Current window</div>
+      <div class="metric-trend trend-up" id="metricTrend">—</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">RISK LEVEL</div>
+      <div class="metric-value" id="metricLevel">LOW</div>
+      <div class="metric-sub" id="metricLevelSub">No immediate action</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">ACCIDENT PROBABILITY</div>
+      <div class="metric-value text-yellow" id="metricProb">0.00%</div>
+      <div class="metric-sub">Sigmoid model</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">ALERT STATUS</div>
+      <div class="metric-value text-green" id="metricAlert">CLEAR</div>
+      <div class="metric-sub" id="metricAlertSub">Threshold: 8.0</div>
+    </div>
+  </div>
+
+  <!-- Risk Bars -->
+  <div class="card mb-24">
+    <div class="card-title">VIOLATION BREAKDOWN — PATHWAY WINDOW</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div>
+        <div class="risk-bar-label"><span>🪖 NO HELMET</span><span class="text-mono text-red" id="barHelmet">0</span></div>
+        <div class="risk-bar-track"><div class="risk-bar-fill" id="barHelmetFill" style="width:0%;background:#FF2D2D;"></div></div>
+      </div>
+      <div>
+        <div class="risk-bar-label"><span>🦺 NO VEST</span><span class="text-mono text-yellow" id="barVest">0</span></div>
+        <div class="risk-bar-track"><div class="risk-bar-fill" id="barVestFill" style="width:0%;background:#FFD600;"></div></div>
+      </div>
+      <div>
+        <div class="risk-bar-label"><span>🔥 FIRE / SMOKE</span><span class="text-mono text-red" id="barFire">0</span></div>
+        <div class="risk-bar-track"><div class="risk-bar-fill" id="barFireFill" style="width:0%;background:#FF6B2D;"></div></div>
+      </div>
+      <div>
+        <div class="risk-bar-label"><span>⛔ INTRUSION</span><span class="text-mono" style="color:#A855F7" id="barIntrusion">0</span></div>
+        <div class="risk-bar-track"><div class="risk-bar-fill" id="barIntrusionFill" style="width:0%;background:#A855F7;"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard-grid">
+    <!-- Live Events Feed -->
+    <div class="card">
+      <div class="flex justify-between align-center mb-16">
+        <div class="card-title" style="margin-bottom:0;">LIVE EVENTS STREAM</div>
+        <div id="eventCount" class="tag tag-green">0 EVENTS</div>
+      </div>
+      <div class="events-list" id="eventsList">
+        <div class="empty-state">
+          <div class="empty-state-icon">📡</div>
+          <div class="empty-state-title">Waiting for events...</div>
+          <div class="empty-state-sub">Events will appear as they are detected</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pathway mini terminal -->
+    <div class="pathway-panel">
+      <div class="pathway-label">
+        <div class="pulse-dot" style="background:var(--green);"></div>
+        PATHWAY STREAM ENGINE
+      </div>
+      <div class="card-title" style="margin-bottom:8px;">SLIDING WINDOW: 10s / HOP: 2s</div>
+      <div class="pathway-stream" id="pathwayMini">
+        <div class="pathway-line"><span class="pathway-ts">[STARTUP]</span> <span style="color:var(--green)">Pathway pw.run() initializing...</span></div>
+        <div class="pathway-line"><span class="pathway-ts">[PATHWAY]</span> <span style="color:var(--green)">EventSubject.run() started — stream is live.</span></div>
+        <div class="pathway-line"><span class="pathway-ts">[STARTUP]</span> Sliding window: 10s duration, 2s hop</div>
+        <div class="pathway-line"><span class="pathway-ts">[STARTUP]</span> Aggregating: risk_score, helmet_count, vest_count, fire_count, intrusion_count</div>
+        <div class="pathway-line"><span class="pathway-ts">[PATHWAY]</span> Behavior: delay=2s, cutoff=5s</div>
+      </div>
+      <div class="separator" style="margin:12px 0;"></div>
+      <div class="card-title" style="margin-bottom:8px;">MITIGATION ADVICE</div>
+      <div id="mitigationText" style="font-size:13px;color:var(--text-dim);line-height:1.6;">
+        ✅ No immediate action required. Continue standard monitoring.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ DETECTION ═══════════════════════════════ -->
+<div class="page" id="page-detection">
+  <div class="section-header">
+    <div class="section-label">AI-POWERED ANALYSIS</div>
+    <div class="section-title">Safety Detection</div>
+  </div>
+
+  <div class="detect-grid">
+    <!-- Upload Panel -->
+    <div style="display:flex;flex-direction:column;gap:16px;">
+
+      <!-- Image Upload -->
+      <div class="card">
+        <div class="flex justify-between align-center mb-16">
+          <div class="card-title" style="margin-bottom:0;">IMAGE DETECTION</div>
+          <div class="tag tag-green">YOLO MODEL</div>
+        </div>
+        <div class="upload-zone" id="imageDropZone">
+          <input type="file" id="imageFile" accept="image/*" onchange="handleImageSelect(event)">
+          <div class="upload-icon">🖼️</div>
+          <div class="upload-title">Drop Image or Click</div>
+          <div class="upload-sub">Upload workplace image for safety analysis</div>
+          <div class="upload-formats">
+            <span class="tag tag-red">JPG</span>
+            <span class="tag tag-red">PNG</span>
+            <span class="tag tag-red">WEBP</span>
+            <span class="tag tag-red">BMP</span>
+          </div>
+        </div>
+        <div id="imagePreviewWrap" class="upload-preview" style="display:none;"></div>
+        <div class="flex gap-8 mt-16">
+          <button class="btn btn-red" style="flex:1;" onclick="detectImage()">
+            <span id="imgBtnText">ANALYZE IMAGE</span>
+          </button>
+          <button class="btn btn-ghost" onclick="clearImage()">CLEAR</button>
+        </div>
+      </div>
+
+      <!-- Video Upload -->
+      <div class="card">
+        <div class="flex justify-between align-center mb-16">
+          <div class="card-title" style="margin-bottom:0;">VIDEO DETECTION</div>
+          <div class="tag tag-yellow">FRAME SAMPLING</div>
+        </div>
+        <div class="upload-zone" id="videoDropZone">
+          <input type="file" id="videoFile" accept="video/*" onchange="handleVideoSelect(event)">
+          <div class="upload-icon">🎬</div>
+          <div class="upload-title">Drop Video or Click</div>
+          <div class="upload-sub">Sampled every 5 frames for efficiency</div>
+          <div class="upload-formats">
+            <span class="tag tag-yellow">MP4</span>
+            <span class="tag tag-yellow">AVI</span>
+            <span class="tag tag-yellow">MOV</span>
+            <span class="tag tag-yellow">MKV</span>
+          </div>
+        </div>
+        <div id="videoPreviewWrap" class="upload-preview" style="display:none;"></div>
+        <div id="videoProgressWrap" style="display:none;margin-top:12px;">
+          <div class="risk-bar-label"><span>Processing...</span><span class="text-mono" id="videoProgressPct">0%</span></div>
+          <div class="risk-bar-track"><div class="risk-bar-fill" id="videoProgressFill" style="width:0%;background:var(--yellow);"></div></div>
+        </div>
+        <div class="flex gap-8 mt-16">
+          <button class="btn btn-red" style="flex:1;" onclick="detectVideo()">
+            <span id="vidBtnText">ANALYZE VIDEO</span>
+          </button>
+          <button class="btn btn-ghost" onclick="clearVideo()">CLEAR</button>
+        </div>
+      </div>
+
+      <!-- Manual Event Push -->
+      <div class="card">
+        <div class="card-title">MANUAL EVENT PUSH (PATHWAY)</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+          <div>
+            <div class="auth-label" style="margin-bottom:6px;">VIOLATION TYPE</div>
+            <div class="select-wrap">
+              <select class="auth-input" id="manualViolation">
+                <option value="no_helmet">No Helmet</option>
+                <option value="no_vest">No Vest</option>
+                <option value="fire">Fire</option>
+                <option value="smoke">Smoke</option>
+                <option value="restricted_zone">Restricted Zone</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <div class="auth-label" style="margin-bottom:6px;">ZONE</div>
+            <div class="select-wrap">
+              <select class="auth-input" id="manualZone">
+                <option value="zone_a">Zone A (1.0x)</option>
+                <option value="zone_b">Zone B (1.5x)</option>
+                <option value="zone_c">Zone C (2.0x)</option>
+                <option value="zone_d">Zone D (3.0x)</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <div class="auth-label" style="margin-bottom:6px;">CONFIDENCE</div>
+            <input class="auth-input" type="number" id="manualConf" value="0.85" min="0" max="1" step="0.01">
+          </div>
+          <div>
+            <div class="auth-label" style="margin-bottom:6px;">CAMERA ID</div>
+            <input class="auth-input" type="text" id="manualCam" value="manual_push">
+          </div>
+        </div>
+        <button class="btn btn-green full-width" onclick="pushManualEvent()">⚡ PUSH TO PATHWAY STREAM</button>
+      </div>
+    </div>
+
+    <!-- Results Panel -->
+    <div>
+      <div class="card" style="height:100%;">
+        <div class="flex justify-between align-center mb-16">
+          <div class="card-title" style="margin-bottom:0;">ANALYSIS RESULTS</div>
+          <div id="resultBadge" class="tag tag-green">READY</div>
+        </div>
+
+        <div id="noResult" class="no-result">
+          <div class="no-result-icon">🔍</div>
+          <div style="font-family:var(--font-head);font-size:18px;font-weight:700;color:var(--text-dim);margin-bottom:8px;">No Analysis Yet</div>
+          <div class="no-result-text">Upload an image or video to start AI safety detection</div>
+        </div>
+
+        <div id="resultContent" style="display:none;flex-direction:column;gap:16px;">
+          <div class="risk-score-display">
+            <div class="risk-score-num" id="resultRiskScore" style="color:var(--red);">0.00</div>
+            <div class="risk-score-label">RISK SCORE</div>
+            <div class="risk-score-badge mt-16">
+              <div id="resultRiskBadge" class="tag tag-green">LOW RISK</div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="pw-metric" style="border-color:var(--border);">
+              <div class="pw-metric-title" style="color:var(--text-dim);">VIOLATIONS FOUND</div>
+              <div class="pw-metric-val" id="resultViolationCount">0</div>
+            </div>
+            <div class="pw-metric" style="border-color:var(--border);">
+              <div class="pw-metric-title" style="color:var(--text-dim);">FRAMES ANALYZED</div>
+              <div class="pw-metric-val" id="resultFrameCount">—</div>
+            </div>
+          </div>
+
+          <div>
+            <div class="card-title">DETECTED VIOLATIONS</div>
+            <div class="violations-list" id="violationsList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ LEADERBOARD ═══════════════════════════════ -->
+<div class="page" id="page-leaderboard">
+  <div class="section-header">
+    <div class="section-label">SAFETY RANKINGS</div>
+    <div class="section-title">Zone Leaderboard</div>
+  </div>
+
+  <!-- My Rank -->
+  <div class="my-rank-card">
+    <div class="my-avatar" id="myAvatar">A</div>
+    <div class="my-info">
+      <div class="my-name" id="myName">Loading...</div>
+      <div class="my-sub" id="myRole">—</div>
+    </div>
+    <div class="my-points">
+      <div class="my-points-num" id="myPoints">—</div>
+      <div class="my-points-label">SAFETY SCORE</div>
+    </div>
+  </div>
+
+  <!-- Zone Battle -->
+  <div class="card mb-24">
+    <div class="flex align-center gap-8 mb-24" style="margin-bottom:20px;">
+      <span style="font-size:20px;">⚔️</span>
+      <div class="card-title" style="margin-bottom:0;">ZONE SAFETY BATTLE</div>
+    </div>
+    <div class="zone-battle" id="zoneBattle">
+      <div class="empty-state" style="grid-column:span 2;">
+        <div class="empty-state-icon">⏳</div>
+        <div class="empty-state-title">Loading zones...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Podium -->
+  <div class="card-title mb-16">TOP 3 ZONES</div>
+  <div class="podium" id="podium">
+    <div class="empty-state" style="grid-column:span 3;">
+      <div class="empty-state-icon">⏳</div>
+      <div class="empty-state-title">Loading leaderboard...</div>
+    </div>
+  </div>
+
+  <!-- Full Table -->
+  <div class="lb-table mt-24">
+    <div class="lb-table-header">
+      <div>RANK</div>
+      <div>ZONE</div>
+      <div>VIOLATIONS</div>
+      <div>RISK SCORE</div>
+      <div>VELOCITY</div>
+      <div>STATUS</div>
+    </div>
+    <div id="lbTableBody">
+      <div class="empty-state">
+        <div class="empty-state-icon">⏳</div>
+        <div class="empty-state-title">Loading data...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ PATHWAY LIVE ═══════════════════════════════ -->
+<div class="page" id="page-pathway">
+  <div class="section-header">
+    <div class="section-label">STREAMING DATA ENGINE</div>
+    <div class="section-title">Pathway Live View</div>
+  </div>
+
+  <!-- Pathway explanation -->
+  <div class="card mb-24" style="border-color:rgba(0,255,148,.2);background:rgba(0,255,148,.03);">
+    <div class="flex align-center gap-16 mb-16">
+      <div class="pulse-dot" style="width:12px;height:12px;background:var(--green);"></div>
+      <div class="card-title" style="margin-bottom:0;color:var(--green);">HOW PATHWAY IS USED IN SURAKSHA AI</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
+      <div style="padding:16px;background:var(--surface2);border-radius:6px;border-top:2px solid var(--green);">
+        <div style="font-family:var(--font-mono);font-size:10px;color:var(--green);margin-bottom:8px;">STEP 1 — INGEST</div>
+        <div style="font-size:12px;color:var(--text-dim);">Events pushed via <code style="color:var(--yellow)">EventSubject.push()</code> from YOLO detections, simulator, and manual API calls</div>
+      </div>
+      <div style="padding:16px;background:var(--surface2);border-radius:6px;border-top:2px solid var(--yellow);">
+        <div style="font-family:var(--font-mono);font-size:10px;color:var(--yellow);margin-bottom:8px;">STEP 2 — WINDOW</div>
+        <div style="font-size:12px;color:var(--text-dim);">Sliding window (10s duration, 2s hop) groups events. Common behavior: delay=2s, cutoff=5s</div>
+      </div>
+      <div style="padding:16px;background:var(--surface2);border-radius:6px;border-top:2px solid var(--red);">
+        <div style="font-family:var(--font-mono);font-size:10px;color:var(--red);margin-bottom:8px;">STEP 3 — AGGREGATE</div>
+        <div style="font-size:12px;color:var(--text-dim);">Sum weighted risk scores by violation type × zone multiplier. Count helmets, vests, fire, intrusions</div>
+      </div>
+      <div style="padding:16px;background:var(--surface2);border-radius:6px;border-top:2px solid #A855F7;">
+        <div style="font-family:var(--font-mono);font-size:10px;color:#A855F7;margin-bottom:8px;">STEP 4 — OBSERVE</div>
+        <div style="font-size:12px;color:var(--text-dim);"><code style="color:var(--yellow)">on_change()</code> callback updates global state. Frontend polls /analytics every 2s to visualize</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pathway-full">
+    <!-- Terminal -->
+    <div>
+      <div class="card-title mb-16">PATHWAY ENGINE TERMINAL</div>
+      <div class="terminal" id="pathwayTerminal">
+        <div class="terminal-header">SURAKSHA AI — PATHWAY STREAM ENGINE v1.0.0</div>
+        <div class="t-line"><span class="t-green">[PATHWAY]</span> <span class="t-white">pw.run() starting...</span></div>
+        <div class="t-line"><span class="t-green">[PATHWAY]</span> <span class="t-white">EventSubject.run() started — stream is live.</span></div>
+        <div class="t-line"><span class="t-green">[STARTUP]</span> <span class="t-white">Pathway risk engine started.</span></div>
+        <div class="t-line"><span class="t-yellow">[CONFIG]</span> <span class="t-white">Window: 10s | Hop: 2s | Alert threshold: 8.0</span></div>
+        <div class="t-line"><span class="t-yellow">[CONFIG]</span> <span class="t-white">Weights: fire=3.0 smoke=2.5 restricted=1.5 helmet=1.2 vest=1.0</span></div>
+        <div class="t-line"><span class="t-yellow">[CONFIG]</span> <span class="t-white">Zone multipliers: A=1.0 B=1.5 C=2.0 D=3.0</span></div>
+        <div class="t-line">─────────────────────────────────────────────</div>
+      </div>
+    </div>
+
+    <!-- Pathway Metrics -->
+    <div class="pathway-metrics">
+      <div class="pw-metric" style="border-color:rgba(0,255,148,.3);">
+        <div class="pw-metric-title">CURRENT WINDOW RISK SCORE</div>
+        <div class="pw-metric-val text-red" id="pwRiskScore">0.00</div>
+        <div class="pw-metric-desc">Weighted sum over 10-second sliding window</div>
+        <div class="event-chart" id="riskChart"></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="pw-metric">
+          <div class="pw-metric-title">VELOCITY</div>
+          <div class="pw-metric-val" id="pwVelocity">+0.00</div>
+          <div class="pw-metric-desc">Risk change rate</div>
+        </div>
+        <div class="pw-metric">
+          <div class="pw-metric-title">PREDICTED RISK</div>
+          <div class="pw-metric-val text-yellow" id="pwPredicted">0.00</div>
+          <div class="pw-metric-desc">2-step lookahead</div>
+        </div>
+        <div class="pw-metric">
+          <div class="pw-metric-title">GROWTH RATE</div>
+          <div class="pw-metric-val" id="pwGrowth">0%</div>
+          <div class="pw-metric-desc">Vs. previous window</div>
+        </div>
+        <div class="pw-metric">
+          <div class="pw-metric-title">ACCIDENT PROB.</div>
+          <div class="pw-metric-val text-red" id="pwProb">0.00%</div>
+          <div class="pw-metric-desc">Sigmoid(score / 5)</div>
+        </div>
+      </div>
+
+      <div class="pw-metric" style="border-color:rgba(255,45,45,.3);">
+        <div class="pw-metric-title">ACTIVE ALERT</div>
+        <div class="pw-metric-val text-green" id="pwAlert">✅ CLEAR</div>
+        <div class="pw-metric-desc" id="pwMitigation">✅ No immediate action required. Continue standard monitoring.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────── CONFIG ───────────────────────────────
+const API_BASE = 'http://localhost:8000';
+let authToken = localStorage.getItem('surakshaToken') || null;
+let currentUser = JSON.parse(localStorage.getItem('surakshaUser') || 'null');
+let pollingInterval = null;
+let riskHistory = Array(20).fill(0);
+let totalEvents = 0;
+
+// ─────────────────────────────── AUTH ───────────────────────────────
+async function apiFetch(path, opts={}) {
+  const headers = { 'Content-Type': 'application/json', ...(opts.headers||{}) };
+  if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
+  const res = await fetch(API_BASE + path, { ...opts, headers });
+  if (res.status === 401) { doLogout(); throw new Error('Unauthorized'); }
+  return res;
+}
+
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+  const spinner = document.getElementById('loginSpinner');
+  const error = document.getElementById('loginError');
+  spinner.style.display = 'block';
+  error.style.display = 'none';
+  try {
+    const res = await fetch(`${API_BASE}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    if (!res.ok) throw new Error('Invalid credentials');
+    const data = await res.json();
+    authToken = data.access_token;
+    localStorage.setItem('surakshaToken', authToken);
+    // Get user info
+    const meRes = await fetch(`${API_BASE}/me`, { headers: { Authorization: `Bearer ${authToken}` } });
+    if (meRes.ok) {
+      currentUser = await meRes.json();
+      localStorage.setItem('surakshaUser', JSON.stringify(currentUser));
+    }
+    document.getElementById('authOverlay').style.display = 'none';
+    initDashboard();
+    toast('Signed in successfully', 'success');
+  } catch(e) {
+    error.style.display = 'block';
+  } finally {
+    spinner.style.display = 'none';
+  }
+}
+
+async function doRegister() {
+  const name = document.getElementById('regName').value;
+  const email = document.getElementById('regEmail').value;
+  const password = document.getElementById('regPassword').value;
+  const role = document.getElementById('regRole').value;
+  const spinner = document.getElementById('regSpinner');
+  const error = document.getElementById('regError');
+  spinner.style.display = 'block';
+  error.style.display = 'none';
+  try {
+    const res = await fetch(`${API_BASE}/signup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, password, role })
+    });
+    if (!res.ok) {
+      const d = await res.json();
+      throw new Error(d.detail || 'Registration failed');
+    }
+    toast('Account created! Please sign in.', 'success');
+    showLogin();
+    document.getElementById('loginEmail').value = email;
+  } catch(e) {
+    error.textContent = e.message;
+    error.style.display = 'block';
+  } finally {
+    spinner.style.display = 'none';
+  }
+}
+
+function doLogout() {
+  authToken = null;
+  currentUser = null;
+  localStorage.removeItem('surakshaToken');
+  localStorage.removeItem('surakshaUser');
+  if (pollingInterval) clearInterval(pollingInterval);
+  document.getElementById('authOverlay').style.display = 'flex';
+}
+
+function showRegister() {
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('registerForm').style.display = 'block';
+}
+function showLogin() {
+  document.getElementById('registerForm').style.display = 'none';
+  document.getElementById('loginForm').style.display = 'block';
+}
+
+// Auto-login if token exists
+if (authToken) {
+  document.getElementById('authOverlay').style.display = 'none';
+  initDashboard();
+}
+
+// ─────────────────────────────── NAVIGATION ───────────────────────────────
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (id === 'leaderboard') loadLeaderboard();
+}
+
+// ─────────────────────────────── POLLING ───────────────────────────────
+function initDashboard() {
+  if (currentUser) {
+    document.getElementById('myName').textContent = currentUser.name || 'User';
+    document.getElementById('myRole').textContent = currentUser.role?.toUpperCase() || '—';
+    document.getElementById('myAvatar').textContent = (currentUser.name || 'U').charAt(0).toUpperCase();
+    document.getElementById('myPoints').textContent = Math.floor(Math.random()*5000+1000);
+  }
+  pollAnalytics();
+  pollingInterval = setInterval(pollAnalytics, 2000);
+  initRiskChart();
+}
+
+async function pollAnalytics() {
+  if (!authToken) return;
+  try {
+    const res = await apiFetch('/analytics');
+    if (!res.ok) return;
+    const d = await res.json();
+    updateDashboard(d);
+    updatePathway(d);
+  } catch(e) { /* silent */ }
+}
+
+function updateDashboard(d) {
+  const riskScore = parseFloat(d.risk_score || 0);
+  const level = d.risk_level || 'LOW';
+  const prob = parseFloat(d.accident_probability || 0);
+  const alert = d.alert_triggered || false;
+
+  document.getElementById('metricRisk').textContent = riskScore.toFixed(2);
+  document.getElementById('metricLevel').textContent = level;
+  document.getElementById('metricLevel').style.color = level==='CRITICAL'?'var(--red)':level==='MEDIUM'?'var(--yellow)':'var(--green)';
+  document.getElementById('metricLevelSub').textContent = level==='CRITICAL'?'Immediate action required':level==='MEDIUM'?'Review live feed':'No immediate action';
+  document.getElementById('metricProb').textContent = (prob*100).toFixed(2)+'%';
+  document.getElementById('metricAlert').textContent = alert ? '⚠️ ALERT' : '✅ CLEAR';
+  document.getElementById('metricAlert').style.color = alert ? 'var(--red)' : 'var(--green)';
+  document.getElementById('metricAlertSub').textContent = alert ? 'Score > threshold 8.0' : 'Threshold: 8.0';
+
+  const vel = parseFloat(d.velocity||0);
+  document.getElementById('metricTrend').textContent = vel>0 ? `↑ +${vel.toFixed(2)}` : vel<0 ? `↓ ${vel.toFixed(2)}` : '—';
+  document.getElementById('metricTrend').className = 'metric-trend ' + (vel>0?'trend-up':'trend-down');
+
+  // Bars
+  const helmet = parseInt(d.helmet_count||0), vest = parseInt(d.vest_count||0);
+  const fire = parseInt(d.fire_count||0), intrusion = parseInt(d.intrusion_count||0);
+  const maxVal = Math.max(helmet, vest, fire, intrusion, 1);
+  document.getElementById('barHelmet').textContent = helmet;
+  document.getElementById('barVest').textContent = vest;
+  document.getElementById('barFire').textContent = fire;
+  document.getElementById('barIntrusion').textContent = intrusion;
+  document.getElementById('barHelmetFill').style.width = (helmet/maxVal*100)+'%';
+  document.getElementById('barVestFill').style.width = (vest/maxVal*100)+'%';
+  document.getElementById('barFireFill').style.width = (fire/maxVal*100)+'%';
+  document.getElementById('barIntrusionFill').style.width = (intrusion/maxVal*100)+'%';
+
+  // Events stream
+  if (riskScore > 0) addEventToStream(d);
+  document.getElementById('mitigationText').textContent = d.mitigation_text || '✅ No immediate action required.';
+}
+
+let lastRisk = 0;
+function addEventToStream(d) {
+  const riskScore = parseFloat(d.risk_score||0);
+  if (Math.abs(riskScore - lastRisk) < 0.01) return;
+  lastRisk = riskScore;
+  totalEvents++;
+
+  const el = document.querySelector('#eventsList .empty-state');
+  if (el) el.remove();
+
+  const level = d.risk_level;
+  const item = document.createElement('div');
+  item.className = `event-item ${level.toLowerCase()}`;
+  const violations = [];
+  if (d.helmet_count > 0) violations.push(`${d.helmet_count} no-helmet`);
+  if (d.vest_count > 0) violations.push(`${d.vest_count} no-vest`);
+  if (d.fire_count > 0) violations.push(`${d.fire_count} fire/smoke`);
+  if (d.intrusion_count > 0) violations.push(`${d.intrusion_count} intrusion`);
+  const text = violations.length ? violations.join(', ') : 'Safety event detected';
+  const now = new Date().toLocaleTimeString();
+  item.innerHTML = `
+    <div class="event-dot ${level.toLowerCase()}"></div>
+    <div class="event-text">${text}</div>
+    <div class="event-zone">${level}</div>
+    <div class="event-time">${now}</div>
+  `;
+  const list = document.getElementById('eventsList');
+  list.insertBefore(item, list.firstChild);
+  while (list.children.length > 20) list.removeChild(list.lastChild);
+  document.getElementById('eventCount').textContent = `${totalEvents} EVENTS`;
+
+  // Pathway mini terminal
+  addPathwayLine(d, riskScore);
+}
+
+function addPathwayLine(d, score) {
+  const mini = document.getElementById('pathwayMini');
+  const ts = new Date().toISOString().substr(11,8);
+  const line = document.createElement('div');
+  line.className = 'pathway-line new';
+  line.innerHTML = `<span class="pathway-ts">[${ts}]</span> <span class="pathway-event">[ON_CHANGE]</span> <span class="pathway-score">score=${score.toFixed(2)}</span> | level=${d.risk_level} | vel=${parseFloat(d.velocity||0).toFixed(2)}`;
+  mini.appendChild(line);
+  mini.scrollTop = mini.scrollHeight;
+  if (mini.children.length > 50) mini.removeChild(mini.firstChild);
+}
+
+function updatePathway(d) {
+  const score = parseFloat(d.risk_score||0);
+  const vel = parseFloat(d.velocity||0);
+  document.getElementById('pwRiskScore').textContent = score.toFixed(2);
+  document.getElementById('pwVelocity').textContent = vel>=0 ? `+${vel.toFixed(4)}` : vel.toFixed(4);
+  document.getElementById('pwVelocity').style.color = vel>0 ? 'var(--red)' : 'var(--green)';
+  document.getElementById('pwPredicted').textContent = parseFloat(d.predicted_risk||0).toFixed(2);
+  document.getElementById('pwGrowth').textContent = `${parseFloat(d.growth_rate||0).toFixed(2)}%`;
+  document.getElementById('pwProb').textContent = `${(parseFloat(d.accident_probability||0)*100).toFixed(2)}%`;
+  const alert = d.alert_triggered;
+  document.getElementById('pwAlert').textContent = alert ? '🚨 ALERT TRIGGERED' : '✅ CLEAR';
+  document.getElementById('pwAlert').style.color = alert ? 'var(--red)' : 'var(--green)';
+  document.getElementById('pwMitigation').textContent = d.mitigation_text || '';
+
+  // Terminal
+  const term = document.getElementById('pathwayTerminal');
+  if (Math.abs(score - lastRisk) > 0.01) {
+    const ts = new Date().toISOString().substr(11,8);
+    const line = document.createElement('div');
+    line.className = 't-line new-entry';
+    const scoreColor = score>10 ? 'red' : score>5 ? 'yellow' : 'green';
+    line.innerHTML = `<span class="t-green">[${ts}]</span> <span class="t-white">[RISK ENGINE]</span> score=<span class="t-${scoreColor}">${score.toFixed(2)}</span> | level=<span class="t-white">${d.risk_level}</span> | vel=<span class="t-${vel>0?'red':'green'}">${vel>=0?'+':''}${vel.toFixed(2)}</span> | alert=<span class="t-${alert?'red':'green'}">${alert?'🚨 YES':'✅ NO'}</span>`;
+    term.appendChild(line);
+    term.scrollTop = term.scrollHeight;
+    if (term.children.length > 60) term.removeChild(term.children[1]);
+  }
+
+  // Risk chart
+  riskHistory.push(score);
+  if (riskHistory.length > 20) riskHistory.shift();
+  updateRiskChart();
+}
+
+function initRiskChart() {
+  const chart = document.getElementById('riskChart');
+  chart.innerHTML = '';
+  for (let i=0; i<20; i++) {
+    const bar = document.createElement('div');
+    bar.className = 'chart-bar';
+    bar.style.height = '2px';
+    chart.appendChild(bar);
+  }
+}
+function updateRiskChart() {
+  const bars = document.querySelectorAll('#riskChart .chart-bar');
+  const max = Math.max(...riskHistory, 1);
+  riskHistory.forEach((v,i) => {
+    if (bars[i]) bars[i].style.height = `${Math.max((v/max)*72, 2)}px`;
+  });
+}
+
+// ─────────────────────────────── LEADERBOARD ───────────────────────────────
+async function loadLeaderboard() {
+  try {
+    const res = await apiFetch('/leaderboard');
+    if (!res.ok) return;
+    const data = await res.json();
+    renderLeaderboard(data);
+  } catch(e) { /* silent */ }
+}
+
+function renderLeaderboard(data) {
+  if (!data.length) return;
+
+  // Zone Battle
+  const zoneBattle = document.getElementById('zoneBattle');
+  const colors = ['var(--red)', 'var(--yellow)', 'var(--green)', '#A855F7'];
+  zoneBattle.innerHTML = data.slice(0,4).map((z,i) => {
+    const pct = Math.min((z.risk_score/100)*100, 100).toFixed(1);
+    const alert = z.alert ? '🚨 HIGH' : '✅ OK';
+    return `<div class="zone-card">
+      <div class="zone-name" style="color:${colors[i%colors.length]}">${z.zone.toUpperCase()}</div>
+      <div class="zone-progress"><div class="zone-progress-fill" style="width:${pct}%;background:${colors[i%colors.length]};"></div></div>
+      <div class="zone-stats">
+        <span>Risk: ${z.risk_score.toFixed(1)}</span>
+        <span>Violations: ${z.violation_count}</span>
+        <span>${alert}</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Podium
+  const sorted = [...data].sort((a,b) => b.risk_score - a.risk_score);
+  const top3 = sorted.slice(0,3);
+  const podiumOrder = top3.length>=2 ? [top3[1], top3[0], top3[2]].filter(Boolean) : top3;
+  const classes = top3.length>=2 ? ['second','first','third'] : ['first'];
+  const medals = ['🥈','🥇','🥉'];
+  document.getElementById('podium').innerHTML = podiumOrder.map((z,i) => `
+    <div class="podium-card ${classes[i]||''}">
+      <div class="podium-medal">${medals[i]}</div>
+      <div class="podium-rank">RANK #${i===1||podiumOrder.length===1?1:i===0?2:3}</div>
+      <div class="podium-name">${z.zone.toUpperCase()}</div>
+      <div class="podium-zone">${z.violation_count} violations</div>
+      <div class="podium-score">${z.risk_score.toFixed(1)}</div>
+      <div class="podium-score-label">RISK SCORE</div>
+    </div>
+  `).join('');
+
+  // Table
+  document.getElementById('lbTableBody').innerHTML = sorted.map((z,i) => `
+    <div class="lb-row">
+      <div class="lb-rank ${i<3?'top':''}">${i<3?['🥇','🥈','🥉'][i]:'#'+(i+1)}</div>
+      <div>
+        <div class="lb-name">${z.zone.toUpperCase()}</div>
+        <div class="lb-zone">${z.violation_count} incidents</div>
+      </div>
+      <div class="lb-scans text-mono">${z.violation_count}</div>
+      <div class="lb-points">${z.risk_score.toFixed(2)}</div>
+      <div class="lb-scans text-mono">${z.velocity}</div>
+      <div class="lb-status"><div class="tag ${z.alert?'tag-red':'tag-green'}">${z.alert?'HIGH':'OK'}</div></div>
+    </div>
+  `).join('');
+}
+
+// ─────────────────────────────── DETECTION ───────────────────────────────
+let selectedImage = null;
+let selectedVideo = null;
+
+function handleImageSelect(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  selectedImage = file;
+  const url = URL.createObjectURL(file);
+  const wrap = document.getElementById('imagePreviewWrap');
+  wrap.style.display = 'block';
+  wrap.innerHTML = `<img src="${url}" alt="Preview">`;
+}
+
+function handleVideoSelect(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  selectedVideo = file;
+  const url = URL.createObjectURL(file);
+  const wrap = document.getElementById('videoPreviewWrap');
+  wrap.style.display = 'block';
+  wrap.innerHTML = `<video src="${url}" controls></video>`;
+}
+
+function clearImage() {
+  selectedImage = null;
+  document.getElementById('imageFile').value = '';
+  document.getElementById('imagePreviewWrap').style.display = 'none';
+  document.getElementById('imagePreviewWrap').innerHTML = '';
+}
+function clearVideo() {
+  selectedVideo = null;
+  document.getElementById('videoFile').value = '';
+  document.getElementById('videoPreviewWrap').style.display = 'none';
+  document.getElementById('videoPreviewWrap').innerHTML = '';
+  document.getElementById('videoProgressWrap').style.display = 'none';
+}
+
+async function detectImage() {
+  if (!selectedImage) { toast('Please select an image first', 'error'); return; }
+  const btn = document.getElementById('imgBtnText');
+  btn.textContent = 'ANALYZING...';
+  const formData = new FormData();
+  formData.append('file', selectedImage);
+  try {
+    const res = await fetch(`${API_BASE}/detect/image`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${authToken}` },
+      body: formData
+    });
+    if (!res.ok) throw new Error('Detection failed');
+    const data = await res.json();
+    showDetectionResult(data, 1);
+    toast(`Detection complete: ${data.violations.length} violations found`, data.violations.length > 0 ? 'error' : 'success');
+  } catch(e) {
+    toast('Detection failed. Is the backend running?', 'error');
+    // Show mock result for demo
+    showDetectionResult({ violations: [], risk_score: 0, frame_count: 1 }, 1);
+  } finally {
+    btn.textContent = 'ANALYZE IMAGE';
+  }
+}
+
+async function detectVideo() {
+  if (!selectedVideo) { toast('Please select a video first', 'error'); return; }
+  const btn = document.getElementById('vidBtnText');
+  btn.textContent = 'PROCESSING...';
+  document.getElementById('videoProgressWrap').style.display = 'block';
+  
+  // Animate progress bar while uploading
+  let prog = 0;
+  const interval = setInterval(() => {
+    prog = Math.min(prog + Math.random()*3, 90);
+    document.getElementById('videoProgressFill').style.width = prog+'%';
+    document.getElementById('videoProgressPct').textContent = prog.toFixed(0)+'%';
+  }, 200);
+
+  const formData = new FormData();
+  formData.append('file', selectedVideo);
+  try {
+    const res = await fetch(`${API_BASE}/detect/video`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${authToken}` },
+      body: formData
+    });
+    if (!res.ok) throw new Error('Detection failed');
+    const data = await res.json();
+    clearInterval(interval);
+    document.getElementById('videoProgressFill').style.width = '100%';
+    document.getElementById('videoProgressPct').textContent = '100%';
+    showDetectionResult(data, data.frame_count);
+    toast(`Video analyzed: ${data.frame_count} frames, ${data.violations.length} violations`, 'success');
+  } catch(e) {
+    clearInterval(interval);
+    toast('Video detection failed. Is the backend running?', 'error');
+    showDetectionResult({ violations: [], risk_score: 0, frame_count: 0 }, 0);
+  } finally {
+    btn.textContent = 'ANALYZE VIDEO';
+    setTimeout(() => { document.getElementById('videoProgressWrap').style.display = 'none'; }, 2000);
+  }
+}
+
+function showDetectionResult(data, frames) {
+  document.getElementById('noResult').style.display = 'none';
+  const rc = document.getElementById('resultContent');
+  rc.style.display = 'flex';
+
+  const risk = parseFloat(data.risk_score || 0);
+  const level = risk > 100 ? 'CRITICAL' : risk > 50 ? 'HIGH' : risk > 20 ? 'MEDIUM' : 'LOW';
+  document.getElementById('resultRiskScore').textContent = risk.toFixed(2);
+  document.getElementById('resultRiskScore').style.color = risk > 50 ? 'var(--red)' : risk > 20 ? 'var(--yellow)' : 'var(--green)';
+  document.getElementById('resultBadge').textContent = level + ' RISK';
+  document.getElementById('resultBadge').className = `tag ${risk>50?'tag-red':risk>20?'tag-yellow':'tag-green'}`;
+  document.getElementById('resultRiskBadge').textContent = level + ' RISK';
+  document.getElementById('resultRiskBadge').className = `tag ${risk>50?'tag-red':risk>20?'tag-yellow':'tag-green'}`;
+  document.getElementById('resultViolationCount').textContent = data.violations?.length || 0;
+  document.getElementById('resultFrameCount').textContent = frames === 1 ? 'IMAGE' : frames;
+
+  const icons = { no_helmet:'🪖', no_vest:'🦺', fire:'🔥', smoke:'💨', restricted_zone:'⛔', unknown:'⚠️' };
+  const list = document.getElementById('violationsList');
+  if (!data.violations?.length) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">✅</div><div class="empty-state-title">No Violations Detected</div></div>';
+  } else {
+    list.innerHTML = data.violations.map(v => {
+      const conf = (v.confidence * 100).toFixed(1);
+      return `<div class="violation-item">
+        <div class="violation-icon">${icons[v.type]||'⚠️'}</div>
+        <div style="flex:1;">
+          <div class="violation-name">${v.type.replace(/_/g,' ').toUpperCase()}</div>
+          <div style="font-size:11px;color:var(--text-dim);">Zone: ${v.zone} | BBox: [${(v.bbox||[]).join(', ')}]</div>
+          <div class="confidence-bar"><div class="confidence-fill" style="width:${conf}%;"></div></div>
+        </div>
+        <div class="violation-conf">${conf}%</div>
+      </div>`;
+    }).join('');
+  }
+}
+
+async function pushManualEvent() {
+  const violation_type = document.getElementById('manualViolation').value;
+  const zone = document.getElementById('manualZone').value;
+  const confidence = parseFloat(document.getElementById('manualConf').value);
+  const camera_id = document.getElementById('manualCam').value;
+  try {
+    const res = await apiFetch('/event', {
+      method: 'POST',
+      body: JSON.stringify({ violation_type, zone, confidence, camera_id })
+    });
+    if (!res.ok) throw new Error();
+    toast(`⚡ Event pushed to Pathway: ${violation_type} @ ${zone}`, 'success');
+  } catch(e) {
+    toast('Push failed. Check backend connection.', 'error');
+  }
+}
+
+// ─────────────────────────────── DRAG & DROP ───────────────────────────────
+['imageDropZone', 'videoDropZone'].forEach(id => {
+  const zone = document.getElementById(id);
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
+    if (id === 'imageDropZone' && file.type.startsWith('image/')) {
+      selectedImage = file;
+      const url = URL.createObjectURL(file);
+      const wrap = document.getElementById('imagePreviewWrap');
+      wrap.style.display = 'block';
+      wrap.innerHTML = `<img src="${url}">`;
+    } else if (id === 'videoDropZone' && file.type.startsWith('video/')) {
+      selectedVideo = file;
+      const url = URL.createObjectURL(file);
+      const wrap = document.getElementById('videoPreviewWrap');
+      wrap.style.display = 'block';
+      wrap.innerHTML = `<video src="${url}" controls></video>`;
+    }
+  });
+});
+
+// ─────────────────────────────── TOAST ───────────────────────────────
+function toast(msg, type='info') {
+  const container = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  container.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity .3s'; setTimeout(()=>t.remove(), 300); }, 3500);
+}
+
+// ─────────────────────────────── ENTER KEY ───────────────────────────────
+document.getElementById('loginPassword').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+document.getElementById('loginEmail').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+</script>
+</body>
+</html>
