@@ -7,6 +7,6 @@ passlib[bcrypt]
 python-jose
 pydantic
 opencv-python-headless
-ultralytics
 numpy
 pillow
+pathway
