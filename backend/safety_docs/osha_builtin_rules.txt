@@ -1,0 +1,31 @@
+OSHA CONSTRUCTION SITE SAFETY RULES
+
+1. PERSONAL PROTECTIVE EQUIPMENT (PPE)
+   - All workers must wear hard hats (helmets) at all times. (OSHA 29 CFR 1926.100)
+   - High-visibility safety vests are mandatory near vehicles/machinery.
+   - Workers without PPE must be removed from the hazard zone immediately.
+
+2. FIRE AND SMOKE SAFETY
+   - Any fire or smoke detection requires immediate site evacuation. (OSHA 29 CFR 1926.150)
+   - Call emergency services (112 / 101) on first detection.
+   - Fire extinguishers must be within 100 feet of any combustible material.
+
+3. RESTRICTED ZONE INTRUSIONS
+   - Unauthorized entry into heavy machinery zones is strictly prohibited.
+   - Intrusion events must be reported to safety officer within 15 minutes.
+   - Barricades must be maintained at all restricted zone perimeters.
+
+4. RISK SCORE ACTION THRESHOLDS
+   - Score 0-4  (LOW)      : Monitor continuously, no immediate action.
+   - Score 4-8  (MEDIUM)   : Issue verbal warnings, increase supervisor patrols.
+   - Score 8+   (CRITICAL) : Halt operations in affected zone, evacuate if fire present.
+
+5. ZONE RISK MULTIPLIERS
+   - Zone A (1.0x): General site area — standard precautions.
+   - Zone B (1.5x): Active construction floor — elevated vigilance.
+   - Zone C (2.0x): Heavy machinery area — strict PPE enforcement.
+   - Zone D (3.0x): Confined spaces / electrical / explosives — highest alert.
+
+6. INCIDENT REPORTING
+   - All violations must be logged in the safety incident register within 1 hour.
+   - Critical incidents must be reported to project manager immediately.

@@ -1,14 +1,10 @@
-# app/risk_engine.py
-
 import pathway as pw
 from datetime import timedelta
 import math
 import threading
 import queue
 
-# ─────────────────────────────────────────────
-# Global state
-# ─────────────────────────────────────────────
+
 latest_risk_state: dict = {
     "risk_score": 0.0,
     "previous_risk": 0.0,
@@ -27,9 +23,7 @@ latest_risk_state: dict = {
 }
 state_lock = threading.Lock()
 
-# ─────────────────────────────────────────────
-# Config
-# ─────────────────────────────────────────────
+
 RISK_WEIGHTS = {
     "no_helmet": 1.2,
     "no_vest":   1.0,
@@ -53,14 +47,10 @@ MITIGATION_MAP = {
     "CRITICAL": "🚨 IMMEDIATE ACTION: Evacuate at-risk zones, alert safety officer, and dispatch response team.",
 }
 
-# ─────────────────────────────────────────────
-# Schema
-# ─────────────────────────────────────────────
+
 from app.schemas.schemas import DetectionSchema
 
-# ─────────────────────────────────────────────
-# Connector Subject — stays alive until shutdown
-# ─────────────────────────────────────────────
+
 class EventSubject(pw.io.python.ConnectorSubject):
     def __init__(self):
         super().__init__()
@@ -79,13 +69,12 @@ class EventSubject(pw.io.python.ConnectorSubject):
                     print("[PATHWAY] EventSubject shutting down.")
                     break
             except queue.Empty:
-                continue   # heartbeat — keep stream open
+                continue  
 
     def push(self, **kwargs):
         """Call this to send an event into the Pathway stream."""
         self.next(**kwargs)
-        self._queue.put(kwargs)   # just to keep run() loop aware
-
+        self._queue.put(kwargs)   
     def stop(self):
         """Gracefully stop the subject."""
         self._queue.put(None)
@@ -93,20 +82,16 @@ class EventSubject(pw.io.python.ConnectorSubject):
 
 subject = EventSubject()
 
-# ─────────────────────────────────────────────
-# Stream
-# ─────────────────────────────────────────────
+
 events = pw.io.python.read(subject, schema=DetectionSchema)
 
-# Debug: confirm raw events arrive
+
 pw.io.subscribe(
     events,
     lambda key, row, time, is_addition: print(f"[RAW EVENT] {row}")
 )
 
-# ─────────────────────────────────────────────
-# UDFs
-# ─────────────────────────────────────────────
+
 def weighted_score(v: str, zone: str) -> float:
     return RISK_WEIGHTS.get(v, 1.0) * ZONE_MULTIPLIERS.get(zone, 1.0)
 
@@ -149,9 +134,7 @@ def get_mitigation(score: float) -> str:
 def get_alert(score: float) -> bool:
     return score > ALERT_THRESHOLD
 
-# ─────────────────────────────────────────────
-# Windowing
-# ─────────────────────────────────────────────
+
 windowed = events.windowby(
     events.timestamp,
     window=pw.temporal.sliding(
@@ -165,9 +148,7 @@ windowed = events.windowby(
     ),
 )
 
-# ─────────────────────────────────────────────
-# Aggregation
-# ─────────────────────────────────────────────
+
 aggregated = windowed.groupby().reduce(
     risk_score      = pw.reducers.sum(pw.apply(weighted_score, pw.this.violation_type, pw.this.zone)),
     helmet_count    = pw.reducers.sum(pw.apply(is_helmet,      pw.this.violation_type)),
@@ -176,9 +157,7 @@ aggregated = windowed.groupby().reduce(
     intrusion_count = pw.reducers.sum(pw.apply(is_intrusion,   pw.this.violation_type)),
 )
 
-# ─────────────────────────────────────────────
-# Derived columns
-# ─────────────────────────────────────────────
+
 final_table = aggregated.with_columns(
     accident_probability = pw.apply(sigmoid,        aggregated.risk_score),
     risk_level           = pw.apply(classify_risk,  aggregated.risk_score),
@@ -186,9 +165,6 @@ final_table = aggregated.with_columns(
     mitigation_text      = pw.apply(get_mitigation, aggregated.risk_score),
 )
 
-# ─────────────────────────────────────────────
-# Observer
-# ─────────────────────────────────────────────
 def on_change(key, row, time, is_addition):
     print(f"[ON_CHANGE] is_addition={is_addition} | row={row}")
 
@@ -234,10 +210,8 @@ def on_change(key, row, time, is_addition):
 
 pw.io.subscribe(final_table, on_change)
 
-# ─────────────────────────────────────────────
-# Entry point
-# ─────────────────────────────────────────────
+
 def start_pathway():
     print("[PATHWAY] pw.run() starting...")
     pw.run()
-    print("[PATHWAY] pw.run() exited.")   # should never reach here
+    print("[PATHWAY] pw.run() exited.")   

@@ -1,10 +1,3 @@
-# app/simulator.py
-"""
-Suraksha AI — Live Safety Event Simulator
-Continuously pushes realistic violation events into the Pathway risk stream
-so dashboards, leaderboard, zones, and incident log stay populated with live data.
-"""
-
 import threading
 import random
 import time
@@ -14,17 +7,16 @@ from app.core.risk_engine import subject
 from app.db.database import SessionLocal
 from app.db.models import Incident
 
-# ─────────────────────────────────────────────
-# Config
-# ─────────────────────────────────────────────
 
-# How often a new event fires (seconds)
+
+
+
 MIN_INTERVAL = 2.0
 MAX_INTERVAL = 6.0
 
-# Violation types and their realistic weights
+
 VIOLATION_POOL = [
-    ("no_helmet",    0.30),   # most common
+    ("no_helmet",    0.30),   
     ("no_vest",      0.25),
     ("person",       0.15),
     ("intrusion",    0.12),
@@ -43,7 +35,7 @@ ZONES = [
     "entry_gate",
 ]
 
-# confidence range per violation type (min, max)
+
 CONFIDENCE_RANGE = {
     "no_helmet":   (0.55, 0.97),
     "no_vest":     (0.50, 0.95),
@@ -54,9 +46,7 @@ CONFIDENCE_RANGE = {
     "fire":        (0.40, 0.88),
 }
 
-# ─────────────────────────────────────────────
-# State
-# ─────────────────────────────────────────────
+
 _simulator_running = False
 _simulator_thread: threading.Thread | None = None
 _events_generated = 0
@@ -85,7 +75,7 @@ def _simulator_loop():
         try:
             violation_type, zone, confidence, ts = _generate_event()
 
-            # Push into Pathway stream
+            
             subject.push(
                 timestamp=ts,
                 violation_type=violation_type,
@@ -94,7 +84,7 @@ def _simulator_loop():
                 camera_id="simulator",
             )
 
-            # Save to DB so incident log, leaderboard, zones all populate
+            
             db = SessionLocal()
             try:
                 db.add(Incident(
@@ -123,9 +113,7 @@ def _simulator_loop():
     print("[SIMULATOR] 🔴 Simulation stopped.")
 
 
-# ─────────────────────────────────────────────
-# Public API — called from main.py
-# ─────────────────────────────────────────────
+
 
 def start_simulator():
     global _simulator_running, _simulator_thread
