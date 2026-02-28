@@ -29,8 +29,5 @@ PyYAML
 packaging
 typing-extensions
 psycopg2-binary
-<<<<<<< HEAD
 bcrypt==4.0.1
-=======
-bcrypt==4.0.1
->>>>>>> c0818ad (Prepare backend for Railway)
+
