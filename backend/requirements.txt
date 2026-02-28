@@ -28,6 +28,5 @@ requests
 PyYAML
 packaging
 typing-extensions
-pathway
 psycopg2-binary
-bcrypt==4.0.1 passlib
+bcrypt==4.0.1
