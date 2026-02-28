@@ -26,13 +26,12 @@
   * { margin:0; padding:0; box-sizing:border-box; }
   body { background:var(--bg); color:var(--text); font-family:var(--font-body); min-height:100vh; overflow-x:hidden; }
 
-  /* ── SCANLINE OVERLAY ── */
   body::before {
     content:''; position:fixed; inset:0; pointer-events:none; z-index:9999;
     background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,.015) 2px, rgba(255,255,255,.015) 4px);
   }
 
-  /* ── NAV ── */
+  /* NAV */
   nav {
     position:fixed; top:0; left:0; right:0; z-index:100;
     height:64px; background:rgba(8,10,14,.9); backdrop-filter:blur(16px);
@@ -53,23 +52,20 @@
   .pulse-dot { width:8px; height:8px; border-radius:50%; background:var(--green); animation:pulse 1.5s infinite; }
   @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
 
-  /* ── PAGES ── */
+  /* PAGES */
   .page { display:none; padding:80px 24px 40px; max-width:1400px; margin:0 auto; }
   .page.active { display:block; }
 
-  /* ── SECTION HEADER ── */
+  /* SECTION HEADER */
   .section-header { margin-bottom:32px; }
   .section-label { font-family:var(--font-mono); font-size:11px; color:var(--red); letter-spacing:3px; margin-bottom:8px; }
   .section-title { font-family:var(--font-head); font-size:36px; font-weight:900; color:var(--text); letter-spacing:-1px; }
 
-  /* ── CARDS ── */
-  .card {
-    background:var(--surface); border:1px solid var(--border);
-    border-radius:8px; padding:24px;
-  }
+  /* CARDS */
+  .card { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:24px; }
   .card-title { font-family:var(--font-mono); font-size:11px; font-weight:700; color:var(--text-dim); letter-spacing:2px; margin-bottom:16px; }
 
-  /* ── BUTTONS ── */
+  /* BUTTONS */
   .btn {
     padding:12px 24px; border:none; border-radius:6px; cursor:pointer;
     font-family:var(--font-mono); font-size:12px; font-weight:700; letter-spacing:1px;
@@ -77,18 +73,20 @@
   }
   .btn-red { background:var(--red); color:#fff; }
   .btn-red:hover { background:var(--red-dim); transform:translateY(-1px); box-shadow:0 4px 16px rgba(255,45,45,.3); }
+  .btn-red:disabled { background:#333; color:#666; cursor:not-allowed; transform:none; box-shadow:none; }
   .btn-ghost { background:transparent; color:var(--text-dim); border:1px solid var(--border); }
   .btn-ghost:hover { border-color:var(--red); color:var(--red); }
+  .btn-ghost:disabled { opacity:.4; cursor:not-allowed; }
   .btn-green { background:var(--green); color:#000; }
   .btn-green:hover { opacity:.9; }
 
-  /* ── TAGS ── */
+  /* TAGS */
   .tag { display:inline-block; padding:4px 10px; border-radius:4px; font-family:var(--font-mono); font-size:10px; font-weight:700; letter-spacing:1px; }
   .tag-red { background:rgba(255,45,45,.15); color:var(--red); border:1px solid rgba(255,45,45,.3); }
   .tag-yellow { background:rgba(255,214,0,.1); color:var(--yellow); border:1px solid rgba(255,214,0,.3); }
   .tag-green { background:rgba(0,255,148,.1); color:var(--green); border:1px solid rgba(0,255,148,.3); }
 
-  /* ─────────────────────────────── DASHBOARD ─────────────────────────────── */
+  /* DASHBOARD */
   .metrics-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
   .metric-card {
     background:var(--surface); border:1px solid var(--border); border-radius:8px;
@@ -142,7 +140,7 @@
   .pathway-label { font-family:var(--font-mono); font-size:10px; color:var(--green); letter-spacing:2px; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
   .pathway-stream { font-family:var(--font-mono); font-size:11px; color:var(--text-dim); line-height:1.8; max-height:240px; overflow-y:auto; }
   .pathway-stream::-webkit-scrollbar { width:3px; }
-  .pathway-stream::-webkit-scrollbar-thumb { background:var(--green); opacity:.3; border-radius:2px; }
+  .pathway-stream::-webkit-scrollbar-thumb { background:var(--green); border-radius:2px; }
   .pathway-line { padding:2px 0; border-bottom:1px solid rgba(255,255,255,.03); }
   .pathway-line.new { color:var(--green); animation:fadeGreen 2s ease forwards; }
   @keyframes fadeGreen { 0%{color:var(--green)} 100%{color:var(--text-dim)} }
@@ -150,16 +148,14 @@
   .pathway-event { color:var(--yellow); }
   .pathway-score { color:var(--red); }
 
-  /* ─────────────────────────────── DETECTION ─────────────────────────────── */
+  /* DETECTION */
   .detect-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
   .upload-zone {
     border:2px dashed var(--border); border-radius:8px; padding:48px 32px;
     text-align:center; cursor:pointer; transition:all .3s;
     background:var(--surface); position:relative; overflow:hidden;
   }
-  .upload-zone:hover, .upload-zone.dragover {
-    border-color:var(--red); background:rgba(255,45,45,.05);
-  }
+  .upload-zone:hover, .upload-zone.dragover { border-color:var(--red); background:rgba(255,45,45,.05); }
   .upload-zone input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; }
   .upload-icon { font-size:48px; margin-bottom:16px; }
   .upload-title { font-family:var(--font-head); font-size:20px; font-weight:700; color:var(--text); margin-bottom:8px; }
@@ -168,8 +164,35 @@
   .upload-preview { margin-top:16px; border-radius:6px; overflow:hidden; max-height:300px; }
   .upload-preview img, .upload-preview video { width:100%; border-radius:6px; max-height:280px; object-fit:contain; }
 
+  /* LIVE CAMERA CARD */
+  .live-cam-feed-wrap {
+    position:relative; background:#000; border-radius:6px; overflow:hidden; min-height:220px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  #liveCamFeed { width:100%; max-height:260px; object-fit:cover; display:none; border-radius:6px; }
+  #liveCamCanvas { display:none; }
+  .live-cam-placeholder {
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    height:220px; gap:12px; opacity:.4;
+  }
+  .live-cam-placeholder .icon { font-size:48px; }
+  .cam-overlay-badge {
+    position:absolute; top:10px; left:10px;
+    background:rgba(255,45,45,.85); color:#fff;
+    font-family:var(--font-mono); font-size:10px; font-weight:700; letter-spacing:1px;
+    padding:4px 10px; border-radius:4px;
+    display:none; align-items:center; gap:6px;
+  }
+  .cam-overlay-badge.active { display:flex; }
+  .cam-overlay-dot { width:7px; height:7px; border-radius:50%; background:#fff; animation:pulse 1s infinite; }
+  .cam-snap-overlay {
+    position:absolute; inset:0; background:rgba(255,255,255,.15);
+    pointer-events:none; opacity:0; transition:opacity .1s;
+    border-radius:6px;
+  }
+  .cam-snap-overlay.flash { opacity:1; }
+
   .detect-result { display:flex; flex-direction:column; gap:16px; }
-  .result-header { display:flex; justify-content:space-between; align-items:center; }
   .violations-list { display:flex; flex-direction:column; gap:8px; max-height:300px; overflow-y:auto; }
   .violation-item {
     display:flex; align-items:center; gap:12px;
@@ -189,96 +212,12 @@
   .no-result-icon { font-size:48px; opacity:.3; }
   .no-result-text { color:var(--text-dim); font-size:14px; }
 
-  /* ── RESULTS REDESIGN ── */
-  .result-hero {
-    position:relative; border-radius:12px; overflow:hidden;
-    background:linear-gradient(135deg, #0a0c10 0%, #12151f 100%);
-    border:1px solid var(--border); padding:32px; margin-bottom:16px;
-  }
-  .result-hero::before {
-    content:''; position:absolute; inset:0; pointer-events:none;
-    background:radial-gradient(ellipse at 50% 0%, rgba(255,45,45,.12) 0%, transparent 70%);
-  }
-  .result-gauge {
-    display:flex; align-items:center; gap:32px;
-  }
-  .gauge-ring { position:relative; flex-shrink:0; }
-  .gauge-ring svg { transform:rotate(-90deg); filter:drop-shadow(0 0 12px rgba(255,45,45,.4)); }
-  .gauge-ring-text {
-    position:absolute; inset:0; display:flex; flex-direction:column;
-    align-items:center; justify-content:center;
-  }
-  .gauge-score { font-family:var(--font-mono); font-size:22px; font-weight:700; line-height:1; }
-  .gauge-label { font-family:var(--font-mono); font-size:9px; color:var(--text-dim); letter-spacing:1px; margin-top:2px; }
-  .result-stats { flex:1; display:flex; flex-direction:column; gap:12px; }
-  .result-stat-row { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:rgba(255,255,255,.03); border-radius:6px; border-left:2px solid transparent; }
-  .result-stat-row.danger { border-left-color:var(--red); }
-  .result-stat-row.warn { border-left-color:var(--yellow); }
-  .result-stat-row.safe { border-left-color:var(--green); }
-  .result-stat-label { font-family:var(--font-mono); font-size:10px; color:var(--text-dim); letter-spacing:1px; }
-  .result-stat-val { font-family:var(--font-mono); font-size:16px; font-weight:700; }
+  .pw-metric { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:20px; }
+  .pw-metric-title { font-family:var(--font-mono); font-size:10px; color:var(--green); letter-spacing:2px; margin-bottom:12px; }
+  .pw-metric-val { font-family:var(--font-mono); font-size:28px; font-weight:700; }
+  .pw-metric-desc { font-size:12px; color:var(--text-dim); margin-top:4px; }
 
-  .viol-card {
-    display:flex; align-items:center; gap:14px;
-    padding:14px 16px; border-radius:8px;
-    background:rgba(255,255,255,.02); border:1px solid var(--border);
-    transition:.2s; margin-bottom:8px;
-  }
-  .viol-card:hover { background:rgba(255,255,255,.04); border-color:rgba(255,45,45,.3); }
-  .viol-badge {
-    width:44px; height:44px; border-radius:8px; display:flex;
-    align-items:center; justify-content:center; font-size:22px; flex-shrink:0;
-  }
-  .viol-badge.fire { background:rgba(255,107,45,.15); border:1px solid rgba(255,107,45,.3); }
-  .viol-badge.smoke { background:rgba(150,150,180,.1); border:1px solid rgba(150,150,180,.3); }
-  .viol-badge.helmet { background:rgba(255,45,45,.15); border:1px solid rgba(255,45,45,.3); }
-  .viol-badge.vest { background:rgba(255,214,0,.1); border:1px solid rgba(255,214,0,.3); }
-  .viol-badge.zone { background:rgba(168,85,247,.1); border:1px solid rgba(168,85,247,.3); }
-  .viol-badge.unknown { background:rgba(100,100,100,.1); border:1px solid rgba(100,100,100,.3); }
-  .viol-info { flex:1; }
-  .viol-name { font-size:13px; font-weight:700; color:var(--text); margin-bottom:4px; }
-  .viol-meta { font-size:11px; color:var(--text-dim); }
-  .viol-conf-wrap { text-align:right; }
-  .viol-conf-pct { font-family:var(--font-mono); font-size:16px; font-weight:700; }
-  .viol-conf-bar { width:60px; height:3px; background:var(--border); border-radius:2px; margin-top:4px; overflow:hidden; }
-  .viol-conf-fill { height:100%; border-radius:2px; }
-
-  /* ── LIVE CAMERA ── */
-  .live-camera-panel {
-    background:var(--surface); border:1px solid var(--border); border-radius:8px;
-    overflow:hidden;
-  }
-  .live-cam-header {
-    display:flex; justify-content:space-between; align-items:center;
-    padding:16px 20px; border-bottom:1px solid var(--border);
-    background:var(--surface2);
-  }
-  .live-feed-wrap {
-    position:relative; background:#000; min-height:280px;
-    display:flex; align-items:center; justify-content:center;
-  }
-  #liveCamVideo { width:100%; max-height:340px; object-fit:cover; display:none; }
-  #liveCamCanvas { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; display:none; }
-  .live-placeholder {
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    gap:12px; padding:48px; text-align:center;
-  }
-  .live-placeholder-icon { font-size:48px; opacity:.3; }
-  .live-cam-controls { padding:16px 20px; display:flex; gap:12px; align-items:center; }
-  .live-status-dot { width:10px; height:10px; border-radius:50%; background:var(--text-dim); }
-  .live-status-dot.active { background:var(--red); animation:pulse 1s infinite; box-shadow:0 0 8px var(--red); }
-  .live-detections { padding:0 20px 16px; max-height:200px; overflow-y:auto; }
-  .live-detection-item {
-    display:flex; align-items:center; gap:10px; padding:8px 12px;
-    background:var(--surface2); border-radius:6px; margin-bottom:6px;
-    border-left:3px solid var(--red); animation:slideIn .2s ease;
-  }
-
-  .progress-ring { width:120px; height:120px; position:relative; margin:0 auto; }
-  .progress-ring svg { transform:rotate(-90deg); }
-  .progress-ring-text { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; }
-
-  /* ─────────────────────────────── LEADERBOARD ─────────────────────────────── */
+  /* LEADERBOARD */
   .podium { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:32px; align-items:end; }
   .podium-card {
     background:var(--surface); border:1px solid var(--border); border-radius:8px;
@@ -297,7 +236,6 @@
   .podium-zone { font-size:12px; color:var(--text-dim); margin-bottom:16px; }
   .podium-score { font-family:var(--font-mono); font-size:28px; font-weight:700; color:var(--yellow); }
   .podium-score-label { font-family:var(--font-mono); font-size:10px; color:var(--text-dim); }
-  .podium-card.first .podium-score { color:var(--yellow); }
   .podium-card.first::before {
     content:''; position:absolute; inset:-2px; border-radius:9px;
     background:linear-gradient(135deg,rgba(255,214,0,.3),transparent,rgba(255,214,0,.1));
@@ -322,13 +260,10 @@
   .lb-rank.top { color:var(--yellow); }
   .lb-name { font-weight:600; color:var(--text); font-size:14px; }
   .lb-zone { font-size:13px; color:var(--text-dim); }
-  .lb-scans { font-family:var(--font-mono); font-size:14px; color:var(--text); }
   .lb-points { font-family:var(--font-mono); font-size:18px; font-weight:700; color:var(--yellow); }
 
   .zone-battle { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-bottom:32px; }
-  .zone-card {
-    background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:20px;
-  }
+  .zone-card { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:20px; }
   .zone-name { font-family:var(--font-head); font-size:14px; font-weight:800; letter-spacing:1px; margin-bottom:12px; }
   .zone-progress { height:6px; background:var(--surface2); border-radius:3px; overflow:hidden; margin-bottom:8px; }
   .zone-progress-fill { height:100%; border-radius:3px; transition:width 1s ease; }
@@ -350,10 +285,8 @@
   .my-points-num { font-family:var(--font-mono); font-size:40px; font-weight:700; color:var(--yellow); }
   .my-points-label { font-family:var(--font-mono); font-size:10px; color:var(--text-dim); letter-spacing:2px; }
 
-  /* ─────────────────────────────── PATHWAY LIVE ─────────────────────────────── */
-  .pathway-full {
-    display:grid; grid-template-columns:1fr 1fr; gap:24px;
-  }
+  /* PATHWAY LIVE */
+  .pathway-full { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
   .terminal {
     background:#000; border:1px solid var(--green); border-radius:8px;
     padding:20px; font-family:var(--font-mono); font-size:12px;
@@ -371,10 +304,6 @@
   @keyframes terminalNew { from{background:rgba(0,255,148,.1)} to{background:transparent} }
 
   .pathway-metrics { display:flex; flex-direction:column; gap:16px; }
-  .pw-metric { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:20px; }
-  .pw-metric-title { font-family:var(--font-mono); font-size:10px; color:var(--green); letter-spacing:2px; margin-bottom:12px; }
-  .pw-metric-val { font-family:var(--font-mono); font-size:28px; font-weight:700; }
-  .pw-metric-desc { font-size:12px; color:var(--text-dim); margin-top:4px; }
 
   .event-chart { display:flex; align-items:flex-end; gap:4px; height:80px; margin-top:8px; }
   .chart-bar {
@@ -383,7 +312,19 @@
     min-height:2px;
   }
 
-  /* ─────────────────────────────── AUTH ─────────────────────────────── */
+  /* ── RAG STATUS BADGE (new, no layout impact) ── */
+  .rag-status-row {
+    display:flex; align-items:center; gap:8px;
+    padding:8px 12px; border-radius:6px;
+    background:var(--surface2); margin-bottom:12px;
+    font-family:var(--font-mono); font-size:10px; letter-spacing:1px;
+  }
+  .rag-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+  .rag-dot.live { background:var(--green); box-shadow:0 0 6px var(--green); animation:pulse 1.5s infinite; }
+  .rag-dot.pending { background:var(--yellow); }
+  .rag-dot.off { background:var(--text-dim); }
+
+  /* AUTH */
   .auth-overlay {
     position:fixed; inset:0; background:rgba(8,10,14,.98); z-index:200;
     display:flex; align-items:center; justify-content:center;
@@ -411,7 +352,7 @@
   }
   @keyframes spin { to{transform:rotate(360deg)} }
 
-  /* ─────────────────────────────── TOAST ─────────────────────────────── */
+  /* TOAST */
   .toast-container { position:fixed; top:80px; right:24px; z-index:300; display:flex; flex-direction:column; gap:8px; }
   .toast {
     padding:12px 20px; border-radius:6px; font-family:var(--font-mono); font-size:12px;
@@ -422,7 +363,52 @@
   .toast.info { background:#1a1a0a; border-color:var(--yellow); color:var(--yellow); }
   @keyframes toastIn { from{opacity:0;transform:translateX(16px)} to{opacity:1;transform:none} }
 
-  /* ─────────────────────────────── MISC ─────────────────────────────── */
+  /* VIOLATION ALERT POPUP */
+  .violation-popup {
+    position:fixed; top:80px; left:50%; transform:translateX(-50%);
+    z-index:500; width:480px; max-width:92vw;
+    border-radius:10px; padding:20px 24px;
+    animation:toastIn .3s ease;
+  }
+  .violation-popup.critical {
+    background:rgba(20,5,5,.97); border:2px solid var(--red);
+    box-shadow:0 0 48px rgba(255,45,45,.4);
+  }
+  .violation-popup.warning {
+    background:rgba(20,16,5,.97); border:2px solid var(--yellow);
+    box-shadow:0 0 32px rgba(255,214,0,.2);
+  }
+  .popup-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+  .popup-title { display:flex; align-items:center; gap:10px; }
+  .popup-title-dot { width:10px; height:10px; border-radius:50%; animation:pulse 1s infinite; }
+  .popup-title-text { font-family:var(--font-head); font-size:17px; font-weight:900; letter-spacing:1px; }
+  .popup-close {
+    background:transparent; border:none; color:var(--text-dim);
+    font-size:18px; cursor:pointer; padding:0 4px; line-height:1;
+  }
+  .popup-viol-row {
+    display:flex; align-items:center; gap:12px;
+    padding:9px 12px; background:rgba(255,255,255,.04);
+    border-radius:6px; margin-bottom:6px;
+  }
+  .popup-viol-icon { font-size:20px; }
+  .popup-viol-name { flex:1; font-weight:700; font-size:13px; color:var(--text); }
+  .popup-viol-conf { font-family:var(--font-mono); font-size:12px; }
+  .popup-viol-zone { font-family:var(--font-mono); font-size:11px; color:var(--text-dim); }
+  .popup-footer { display:flex; justify-content:space-between; align-items:center; margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,255,255,.06); }
+  .popup-risk { font-family:var(--font-mono); font-size:12px; color:var(--text-dim); }
+  .popup-time { font-family:var(--font-mono); font-size:10px; color:var(--text-dim); }
+  .popup-dismiss-bar {
+    height:3px; border-radius:2px; margin-top:10px;
+    background:rgba(255,255,255,.1); overflow:hidden;
+  }
+  .popup-dismiss-fill {
+    height:100%; border-radius:2px;
+    animation:dismissProgress 6s linear forwards;
+  }
+  @keyframes dismissProgress { from{width:100%} to{width:0%} }
+
+  /* MISC */
   .flex { display:flex; }
   .gap-16 { gap:16px; }
   .gap-8 { gap:8px; }
@@ -438,13 +424,9 @@
   .text-green { color:var(--green); }
   .text-yellow { color:var(--yellow); }
   .full-width { width:100%; }
-
   .separator { height:1px; background:var(--border); margin:24px 0; }
 
-  .empty-state {
-    padding:60px 40px; text-align:center;
-    background:var(--surface2); border-radius:8px;
-  }
+  .empty-state { padding:60px 40px; text-align:center; background:var(--surface2); border-radius:8px; }
   .empty-state-icon { font-size:48px; margin-bottom:16px; opacity:.4; }
   .empty-state-title { font-family:var(--font-head); font-size:18px; font-weight:700; color:var(--text-dim); margin-bottom:8px; }
   .empty-state-sub { font-size:13px; color:var(--text-dim); }
@@ -477,7 +459,6 @@
     <div class="auth-logo">SURAKSHA<span style="color:var(--text)"> AI</span></div>
     <div class="auth-sub">Workplace Safety Intelligence Platform</div>
 
-    <!-- LOGIN FORM -->
     <div id="loginForm">
       <div class="auth-field">
         <div class="auth-label">EMAIL ADDRESS</div>
@@ -495,7 +476,6 @@
       <div class="auth-toggle">Don't have an account? <span onclick="showRegister()">Create one</span></div>
     </div>
 
-    <!-- REGISTER FORM -->
     <div id="registerForm" style="display:none;">
       <div class="auth-field">
         <div class="auth-label">FULL NAME</div>
@@ -547,7 +527,7 @@
 <!-- TOAST CONTAINER -->
 <div class="toast-container" id="toastContainer"></div>
 
-<!-- ═══════════════════════════════ DASHBOARD ═══════════════════════════════ -->
+<!-- ══════════════════════════ DASHBOARD ══════════════════════════ -->
 <div class="page active" id="page-dashboard">
   <div class="section-header">
     <div class="section-label">REAL-TIME MONITORING</div>
@@ -578,7 +558,6 @@
     </div>
   </div>
 
-  <!-- Risk Bars -->
   <div class="card mb-24">
     <div class="card-title">VIOLATION BREAKDOWN — PATHWAY WINDOW</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
@@ -602,7 +581,6 @@
   </div>
 
   <div class="dashboard-grid">
-    <!-- Live Events Feed -->
     <div class="card">
       <div class="flex justify-between align-center mb-16">
         <div class="card-title" style="margin-bottom:0;">LIVE EVENTS STREAM</div>
@@ -617,7 +595,6 @@
       </div>
     </div>
 
-    <!-- Pathway mini terminal -->
     <div class="pathway-panel">
       <div class="pathway-label">
         <div class="pulse-dot" style="background:var(--green);"></div>
@@ -638,9 +615,66 @@
       </div>
     </div>
   </div>
+
+  <!-- ══ AI ANALYST PANEL — updated with RAG awareness ══ -->
+  <div class="card mt-24" style="border-color:rgba(0,255,148,.25);background:linear-gradient(135deg,rgba(0,255,148,.03),var(--surface));">
+
+    <!-- Header row -->
+    <div class="flex justify-between align-center mb-16">
+      <div>
+        <div class="card-title" style="margin-bottom:4px;color:var(--green);" id="aiPanelTitle">
+          🤖 AI SAFETY ANALYST — PATHWAY LLM xPack + RAG
+        </div>
+        <div style="font-size:12px;color:var(--text-dim);">
+          Real-time analysis using Pathway's live DocumentStore + LLM xPack
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div id="aiEmailBadge" style="display:none;" class="tag tag-red">📧 EMAIL SENT</div>
+        <div id="aiRagBadge" style="display:none;" class="tag tag-green">🔍 RAG ACTIVE</div>
+      </div>
+    </div>
+
+    <!-- RAG pipeline status row — NEW -->
+    <div class="rag-status-row" id="ragStatusRow">
+      <div class="rag-dot pending" id="ragDot"></div>
+      <span id="ragStatusText" style="color:var(--text-dim);">Checking Pathway RAG pipeline status...</span>
+      <span style="margin-left:auto;color:var(--text-dim);" id="ragModelText"></span>
+    </div>
+
+    <!-- AI report box -->
+    <div id="aiExplainBox" style="display:none;margin-bottom:16px;padding:20px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--green);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div style="font-family:var(--font-mono);font-size:10px;color:var(--green);letter-spacing:2px;">AI REPORT</div>
+        <!-- RAG source badge shown inline in report — NEW -->
+        <div id="aiReportSourceBadge" style="display:none;" class="tag tag-green" style="font-size:9px;">🔍 RAG-POWERED</div>
+      </div>
+      <div style="font-size:14px;line-height:1.8;color:var(--text);" id="aiExplainText"></div>
+      <!-- Retrieved docs indicator — NEW -->
+      <div id="aiRagContextRow" style="display:none;margin-top:12px;padding:10px 12px;background:rgba(0,255,148,.05);border:1px solid rgba(0,255,148,.15);border-radius:6px;">
+        <div style="font-family:var(--font-mono);font-size:10px;color:var(--green);letter-spacing:1px;margin-bottom:4px;">📄 RETRIEVED FROM SAFETY RULEBOOK (DocumentStore)</div>
+        <div style="font-size:11px;color:var(--text-dim);" id="aiRagContextText">OSHA rules retrieved and injected into prompt via Pathway live index.</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">
+        <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">
+          Risk: <span id="aiRiskScore" style="color:var(--red);">—</span> | Level: <span id="aiRiskLevel">—</span>
+        </div>
+        <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);" id="aiGeneratedAt">—</div>
+      </div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="flex gap-8">
+      <button class="btn btn-green" style="flex:1;" id="aiExplainBtn" onclick="getAIExplanation()">
+        🤖 GET AI SAFETY REPORT
+      </button>
+      <button class="btn btn-ghost" onclick="getAICached()" title="Load last cached report">CACHED</button>
+      <button class="btn btn-ghost" onclick="checkAIStatus()" title="Refresh RAG pipeline status">⟳ RAG STATUS</button>
+    </div>
+  </div>
 </div>
 
-<!-- ═══════════════════════════════ DETECTION ═══════════════════════════════ -->
+<!-- ══════════════════════════ DETECTION ══════════════════════════ -->
 <div class="page" id="page-detection">
   <div class="section-header">
     <div class="section-label">AI-POWERED ANALYSIS</div>
@@ -648,7 +682,6 @@
   </div>
 
   <div class="detect-grid">
-    <!-- Upload Panel -->
     <div style="display:flex;flex-direction:column;gap:16px;">
 
       <!-- Image Upload -->
@@ -709,6 +742,38 @@
         </div>
       </div>
 
+      <!-- Live Camera -->
+      <div class="card">
+        <div class="flex justify-between align-center mb-16">
+          <div class="card-title" style="margin-bottom:0;">LIVE CAMERA</div>
+          <div class="tag tag-red" id="liveCamTag" style="display:none;">● RECORDING</div>
+        </div>
+        <div class="live-cam-feed-wrap" id="liveCamWrap">
+          <video id="liveCamFeed" autoplay playsinline muted></video>
+          <canvas id="liveCamCanvas"></canvas>
+          <div class="cam-snap-overlay" id="camSnapOverlay"></div>
+          <div class="cam-overlay-badge" id="camLiveBadge">
+            <div class="cam-overlay-dot"></div>
+            LIVE
+          </div>
+          <div class="live-cam-placeholder" id="liveCamPlaceholder">
+            <div class="icon">📷</div>
+            <div style="font-family:var(--font-mono);font-size:12px;color:var(--text-dim);letter-spacing:1px;">CAMERA INACTIVE</div>
+          </div>
+        </div>
+        <div id="liveCamStatusText" style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);margin-top:8px;margin-bottom:12px;letter-spacing:.5px;">
+          Start camera to begin real-time YOLO detection
+        </div>
+        <div class="flex gap-8">
+          <button class="btn btn-red" style="flex:1;" id="liveCamBtn" onclick="toggleLiveCamera()">
+            START CAMERA
+          </button>
+          <button class="btn btn-ghost" id="snapBtn" onclick="snapAndAnalyze()" disabled>
+            SNAP NOW
+          </button>
+        </div>
+      </div>
+
       <!-- Manual Event Push -->
       <div class="card">
         <div class="card-title">MANUAL EVENT PUSH (PATHWAY)</div>
@@ -749,7 +814,7 @@
       </div>
     </div>
 
-    <!-- Results Panel -->
+    <!-- RIGHT COLUMN: results -->
     <div>
       <div class="card" style="height:100%;">
         <div class="flex justify-between align-center mb-16">
@@ -760,26 +825,33 @@
         <div id="noResult" class="no-result">
           <div class="no-result-icon">🔍</div>
           <div style="font-family:var(--font-head);font-size:18px;font-weight:700;color:var(--text-dim);margin-bottom:8px;">No Analysis Yet</div>
-          <div class="no-result-text">Upload an image or video to start AI safety detection</div>
+          <div class="no-result-text">Upload an image, video, or use Live Camera</div>
         </div>
 
         <div id="resultContent" style="display:none;flex-direction:column;gap:16px;">
-          <div class="risk-score-display">
-            <div class="risk-score-num" id="resultRiskScore" style="color:var(--red);">0.00</div>
-            <div class="risk-score-label">RISK SCORE</div>
-            <div class="risk-score-badge mt-16">
-              <div id="resultRiskBadge" class="tag tag-green">LOW RISK</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="pw-metric" style="border-color:var(--border);">
+              <div class="pw-metric-title" style="color:var(--text-dim);">RISK SCORE</div>
+              <div class="pw-metric-val" id="resultRiskScore" style="color:var(--red);">0.00</div>
+              <div id="resultRiskBadge" class="tag tag-green mt-16" style="margin-top:8px;">LOW RISK</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div class="pw-metric" style="border-color:var(--border);flex:1;">
+                <div class="pw-metric-title" style="color:var(--text-dim);">VIOLATIONS</div>
+                <div class="pw-metric-val" id="resultViolationCount">0</div>
+              </div>
+              <div class="pw-metric" style="border-color:var(--border);flex:1;">
+                <div class="pw-metric-title" style="color:var(--text-dim);">FRAMES</div>
+                <div class="pw-metric-val" id="resultFrameCount">—</div>
+              </div>
             </div>
           </div>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-            <div class="pw-metric" style="border-color:var(--border);">
-              <div class="pw-metric-title" style="color:var(--text-dim);">VIOLATIONS FOUND</div>
-              <div class="pw-metric-val" id="resultViolationCount">0</div>
-            </div>
-            <div class="pw-metric" style="border-color:var(--border);">
-              <div class="pw-metric-title" style="color:var(--text-dim);">FRAMES ANALYZED</div>
-              <div class="pw-metric-val" id="resultFrameCount">—</div>
+          <div id="annotatedImageWrap" style="display:none;">
+            <div class="card-title">ANNOTATED DETECTION IMAGE</div>
+            <div style="position:relative;border-radius:6px;overflow:hidden;background:#000;">
+              <img id="annotatedImage" src="" alt="Annotated" style="width:100%;border-radius:6px;max-height:320px;object-fit:contain;">
+              <div style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.7);padding:4px 10px;border-radius:4px;font-family:var(--font-mono);font-size:10px;color:var(--green);">SURAKSHA AI ANNOTATED</div>
             </div>
           </div>
 
@@ -793,14 +865,13 @@
   </div>
 </div>
 
-<!-- ═══════════════════════════════ LEADERBOARD ═══════════════════════════════ -->
+<!-- ══════════════════════════ LEADERBOARD ══════════════════════════ -->
 <div class="page" id="page-leaderboard">
   <div class="section-header">
     <div class="section-label">SAFETY RANKINGS</div>
     <div class="section-title">Zone Leaderboard</div>
   </div>
 
-  <!-- My Rank -->
   <div class="my-rank-card">
     <div class="my-avatar" id="myAvatar">A</div>
     <div class="my-info">
@@ -813,7 +884,6 @@
     </div>
   </div>
 
-  <!-- Zone Battle -->
   <div class="card mb-24">
     <div class="flex align-center gap-8 mb-24" style="margin-bottom:20px;">
       <span style="font-size:20px;">⚔️</span>
@@ -827,7 +897,6 @@
     </div>
   </div>
 
-  <!-- Podium -->
   <div class="card-title mb-16">TOP 3 ZONES</div>
   <div class="podium" id="podium">
     <div class="empty-state" style="grid-column:span 3;">
@@ -836,7 +905,6 @@
     </div>
   </div>
 
-  <!-- Full Table -->
   <div class="lb-table mt-24">
     <div class="lb-table-header">
       <div>RANK</div>
@@ -855,14 +923,13 @@
   </div>
 </div>
 
-<!-- ═══════════════════════════════ PATHWAY LIVE ═══════════════════════════════ -->
+<!-- ══════════════════════════ PATHWAY LIVE ══════════════════════════ -->
 <div class="page" id="page-pathway">
   <div class="section-header">
     <div class="section-label">STREAMING DATA ENGINE</div>
     <div class="section-title">Pathway Live View</div>
   </div>
 
-  <!-- Pathway explanation -->
   <div class="card mb-24" style="border-color:rgba(0,255,148,.2);background:rgba(0,255,148,.03);">
     <div class="flex align-center gap-16 mb-16">
       <div class="pulse-dot" style="width:12px;height:12px;background:var(--green);"></div>
@@ -888,8 +955,37 @@
     </div>
   </div>
 
+  <!-- NEW — RAG pipeline explanation card -->
+  <div class="card mb-24" style="border-color:rgba(0,255,148,.2);background:rgba(0,255,148,.02);">
+    <div class="flex align-center gap-16 mb-16">
+      <div class="pulse-dot" style="width:12px;height:12px;background:var(--green);"></div>
+      <div class="card-title" style="margin-bottom:0;color:var(--green);">PATHWAY LLM xPACK — RAG PIPELINE</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
+      <div style="padding:16px;background:var(--surface2);border-radius:6px;border-top:2px solid var(--green);">
+        <div style="font-family:var(--font-mono);font-size:10px;color:var(--green);margin-bottom:8px;">STEP A — DOCS</div>
+        <div style="font-size:12px;color:var(--text-dim);"><code style="color:var(--yellow)">pw.io.fs.read()</code> streams <code style="color:var(--yellow)">./safety_docs/</code> — auto-updates when OSHA rule files change</div>
+      </div>
+      <div style="padding:16px;background:var(--surface2);border-radius:6px;border-top:2px solid var(--yellow);">
+        <div style="font-family:var(--font-mono);font-size:10px;color:var(--yellow);margin-bottom:8px;">STEP B — INDEX</div>
+        <div style="font-size:12px;color:var(--text-dim);"><code style="color:var(--yellow)">DocumentStore</code> maintains live BM25 + KNN hybrid index via <code style="color:var(--yellow)">BruteForceKnnFactory</code></div>
+      </div>
+      <div style="padding:16px;background:var(--surface2);border-radius:6px;border-top:2px solid var(--red);">
+        <div style="font-family:var(--font-mono);font-size:10px;color:var(--red);margin-bottom:8px;">STEP C — RETRIEVE</div>
+        <div style="font-size:12px;color:var(--text-dim);"><code style="color:var(--yellow)">doc_store.retrieve(query, k=3)</code> fetches top-3 relevant OSHA rule chunks for the violation context</div>
+      </div>
+      <div style="padding:16px;background:var(--surface2);border-radius:6px;border-top:2px solid #A855F7;">
+        <div style="font-family:var(--font-mono);font-size:10px;color:#A855F7;margin-bottom:8px;">STEP D — GENERATE</div>
+        <div style="font-size:12px;color:var(--text-dim);"><code style="color:var(--yellow)">LiteLLMChat</code> via OpenRouter generates a grounded safety report citing retrieved rules</div>
+      </div>
+    </div>
+    <div style="margin-top:16px;padding:12px 16px;background:var(--surface2);border-radius:6px;display:flex;align-items:center;gap:12px;">
+      <div class="rag-dot off" id="ragDotPathwayPage"></div>
+      <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);" id="ragStatusPathwayPage">Checking RAG pipeline...</span>
+    </div>
+  </div>
+
   <div class="pathway-full">
-    <!-- Terminal -->
     <div>
       <div class="card-title mb-16">PATHWAY ENGINE TERMINAL</div>
       <div class="terminal" id="pathwayTerminal">
@@ -900,11 +996,12 @@
         <div class="t-line"><span class="t-yellow">[CONFIG]</span> <span class="t-white">Window: 10s | Hop: 2s | Alert threshold: 8.0</span></div>
         <div class="t-line"><span class="t-yellow">[CONFIG]</span> <span class="t-white">Weights: fire=3.0 smoke=2.5 restricted=1.5 helmet=1.2 vest=1.0</span></div>
         <div class="t-line"><span class="t-yellow">[CONFIG]</span> <span class="t-white">Zone multipliers: A=1.0 B=1.5 C=2.0 D=3.0</span></div>
+        <div class="t-line"><span class="t-green">[RAG]</span> <span class="t-white">LLM xPack initialising...</span></div>
+        <div class="t-line"><span class="t-green">[RAG]</span> <span class="t-white">DocumentStore: streaming ./safety_docs/ (BM25 + KNN)</span></div>
         <div class="t-line">─────────────────────────────────────────────</div>
       </div>
     </div>
 
-    <!-- Pathway Metrics -->
     <div class="pathway-metrics">
       <div class="pw-metric" style="border-color:rgba(0,255,148,.3);">
         <div class="pw-metric-title">CURRENT WINDOW RISK SCORE</div>
@@ -946,7 +1043,7 @@
 </div>
 
 <script>
-// ─────────────────────────────── CONFIG ───────────────────────────────
+// ══════════════════════════ CONFIG ══════════════════════════
 const API_BASE = 'http://localhost:8000';
 let authToken = localStorage.getItem('surakshaToken') || null;
 let currentUser = JSON.parse(localStorage.getItem('surakshaUser') || 'null');
@@ -954,34 +1051,34 @@ let pollingInterval = null;
 let riskHistory = Array(20).fill(0);
 let totalEvents = 0;
 
-// ─────────────────────────────── AUTH ───────────────────────────────
-async function apiFetch(path, opts={}) {
-  const headers = { 'Content-Type': 'application/json', ...(opts.headers||{}) };
-  if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
-  const res = await fetch(API_BASE + path, { ...opts, headers });
+// ══════════════════════════ AUTH ══════════════════════════
+async function apiFetch(path, opts) {
+  opts = opts || {};
+  var headers = Object.assign({ 'Content-Type': 'application/json' }, opts.headers || {});
+  if (authToken) headers['Authorization'] = 'Bearer ' + authToken;
+  var res = await fetch(API_BASE + path, Object.assign({}, opts, { headers: headers }));
   if (res.status === 401) { doLogout(); throw new Error('Unauthorized'); }
   return res;
 }
 
 async function doLogin() {
-  const email = document.getElementById('loginEmail').value;
-  const password = document.getElementById('loginPassword').value;
-  const spinner = document.getElementById('loginSpinner');
-  const error = document.getElementById('loginError');
+  var email = document.getElementById('loginEmail').value;
+  var password = document.getElementById('loginPassword').value;
+  var spinner = document.getElementById('loginSpinner');
+  var error = document.getElementById('loginError');
   spinner.style.display = 'block';
   error.style.display = 'none';
   try {
-    const res = await fetch(`${API_BASE}/login`, {
+    var res = await fetch(API_BASE + '/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ email: email, password: password })
     });
     if (!res.ok) throw new Error('Invalid credentials');
-    const data = await res.json();
+    var data = await res.json();
     authToken = data.access_token;
     localStorage.setItem('surakshaToken', authToken);
-    // Get user info
-    const meRes = await fetch(`${API_BASE}/me`, { headers: { Authorization: `Bearer ${authToken}` } });
+    var meRes = await fetch(API_BASE + '/me', { headers: { Authorization: 'Bearer ' + authToken } });
     if (meRes.ok) {
       currentUser = await meRes.json();
       localStorage.setItem('surakshaUser', JSON.stringify(currentUser));
@@ -997,22 +1094,22 @@ async function doLogin() {
 }
 
 async function doRegister() {
-  const name = document.getElementById('regName').value;
-  const email = document.getElementById('regEmail').value;
-  const password = document.getElementById('regPassword').value;
-  const role = document.getElementById('regRole').value;
-  const spinner = document.getElementById('regSpinner');
-  const error = document.getElementById('regError');
+  var name = document.getElementById('regName').value;
+  var email = document.getElementById('regEmail').value;
+  var password = document.getElementById('regPassword').value;
+  var role = document.getElementById('regRole').value;
+  var spinner = document.getElementById('regSpinner');
+  var error = document.getElementById('regError');
   spinner.style.display = 'block';
   error.style.display = 'none';
   try {
-    const res = await fetch(`${API_BASE}/signup`, {
+    var res = await fetch(API_BASE + '/signup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password, role })
+      body: JSON.stringify({ name: name, email: email, password: password, role: role })
     });
     if (!res.ok) {
-      const d = await res.json();
+      var d = await res.json();
       throw new Error(d.detail || 'Registration failed');
     }
     toast('Account created! Please sign in.', 'success');
@@ -1027,11 +1124,13 @@ async function doRegister() {
 }
 
 function doLogout() {
+  stopLiveCamera();
   authToken = null;
   currentUser = null;
   localStorage.removeItem('surakshaToken');
   localStorage.removeItem('surakshaUser');
-  if (pollingInterval) clearInterval(pollingInterval);
+  if (pollingInterval) { clearInterval(pollingInterval); pollingInterval = null; }
+  if (window._lbInterval) { clearInterval(window._lbInterval); window._lbInterval = null; }
   document.getElementById('authOverlay').style.display = 'flex';
 }
 
@@ -1044,264 +1143,335 @@ function showLogin() {
   document.getElementById('loginForm').style.display = 'block';
 }
 
-// Auto-login if token exists
 if (authToken) {
   document.getElementById('authOverlay').style.display = 'none';
   initDashboard();
 }
 
-// ─────────────────────────────── NAVIGATION ───────────────────────────────
+// ══════════════════════════ NAVIGATION ══════════════════════════
 function showPage(id, btn) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('page-' + id).classList.add('active');
   if (btn) btn.classList.add('active');
-  if (id === 'leaderboard') loadLeaderboard();
+  if (id === 'leaderboard') {
+    loadLeaderboard();
+    if (window._lbInterval) clearInterval(window._lbInterval);
+    window._lbInterval = setInterval(loadLeaderboard, 3000);
+  } else {
+    if (window._lbInterval) { clearInterval(window._lbInterval); window._lbInterval = null; }
+  }
 }
 
-// ─────────────────────────────── POLLING ───────────────────────────────
+// ══════════════════════════ DASHBOARD POLLING ══════════════════════════
 function initDashboard() {
   if (currentUser) {
     document.getElementById('myName').textContent = currentUser.name || 'User';
-    document.getElementById('myRole').textContent = currentUser.role?.toUpperCase() || '—';
+    document.getElementById('myRole').textContent = (currentUser.role || '').toUpperCase() || '—';
     document.getElementById('myAvatar').textContent = (currentUser.name || 'U').charAt(0).toUpperCase();
-    document.getElementById('myPoints').textContent = Math.floor(Math.random()*5000+1000);
+    document.getElementById('myPoints').textContent = Math.floor(Math.random() * 5000 + 1000);
   }
   pollAnalytics();
   pollingInterval = setInterval(pollAnalytics, 2000);
   initRiskChart();
+  // Check RAG status on load
+  checkAIStatus();
 }
 
 async function pollAnalytics() {
   if (!authToken) return;
   try {
-    const res = await apiFetch('/analytics');
+    var res = await apiFetch('/analytics');
     if (!res.ok) return;
-    const d = await res.json();
+    var d = await res.json();
     updateDashboard(d);
     updatePathway(d);
   } catch(e) { /* silent */ }
 }
 
 function updateDashboard(d) {
-  const riskScore = parseFloat(d.risk_score || 0);
-  const level = d.risk_level || 'LOW';
-  const prob = parseFloat(d.accident_probability || 0);
-  const alert = d.alert_triggered || false;
+  var riskScore = parseFloat(d.risk_score || 0);
+  var level = d.risk_level || 'LOW';
+  var prob = parseFloat(d.accident_probability || 0);
+  var alert = d.alert_triggered || false;
 
   document.getElementById('metricRisk').textContent = riskScore.toFixed(2);
   document.getElementById('metricLevel').textContent = level;
-  document.getElementById('metricLevel').style.color = level==='CRITICAL'?'var(--red)':level==='MEDIUM'?'var(--yellow)':'var(--green)';
-  document.getElementById('metricLevelSub').textContent = level==='CRITICAL'?'Immediate action required':level==='MEDIUM'?'Review live feed':'No immediate action';
-  document.getElementById('metricProb').textContent = (prob*100).toFixed(2)+'%';
+  document.getElementById('metricLevel').style.color = level === 'CRITICAL' ? 'var(--red)' : level === 'MEDIUM' ? 'var(--yellow)' : 'var(--green)';
+  document.getElementById('metricLevelSub').textContent = level === 'CRITICAL' ? 'Immediate action required' : level === 'MEDIUM' ? 'Review live feed' : 'No immediate action';
+  document.getElementById('metricProb').textContent = (prob * 100).toFixed(2) + '%';
   document.getElementById('metricAlert').textContent = alert ? '⚠️ ALERT' : '✅ CLEAR';
   document.getElementById('metricAlert').style.color = alert ? 'var(--red)' : 'var(--green)';
   document.getElementById('metricAlertSub').textContent = alert ? 'Score > threshold 8.0' : 'Threshold: 8.0';
 
-  const vel = parseFloat(d.velocity||0);
-  document.getElementById('metricTrend').textContent = vel>0 ? `↑ +${vel.toFixed(2)}` : vel<0 ? `↓ ${vel.toFixed(2)}` : '—';
-  document.getElementById('metricTrend').className = 'metric-trend ' + (vel>0?'trend-up':'trend-down');
+  var vel = parseFloat(d.velocity || 0);
+  document.getElementById('metricTrend').textContent = vel > 0 ? '↑ +' + vel.toFixed(2) : vel < 0 ? '↓ ' + vel.toFixed(2) : '—';
+  document.getElementById('metricTrend').className = 'metric-trend ' + (vel > 0 ? 'trend-up' : 'trend-down');
 
-  // Bars
-  const helmet = parseInt(d.helmet_count||0), vest = parseInt(d.vest_count||0);
-  const fire = parseInt(d.fire_count||0), intrusion = parseInt(d.intrusion_count||0);
-  const maxVal = Math.max(helmet, vest, fire, intrusion, 1);
+  var helmet = parseInt(d.helmet_count || 0);
+  var vest = parseInt(d.vest_count || 0);
+  var fire = parseInt(d.fire_count || 0);
+  var intrusion = parseInt(d.intrusion_count || 0);
+  var maxVal = Math.max(helmet, vest, fire, intrusion, 1);
   document.getElementById('barHelmet').textContent = helmet;
   document.getElementById('barVest').textContent = vest;
   document.getElementById('barFire').textContent = fire;
   document.getElementById('barIntrusion').textContent = intrusion;
-  document.getElementById('barHelmetFill').style.width = (helmet/maxVal*100)+'%';
-  document.getElementById('barVestFill').style.width = (vest/maxVal*100)+'%';
-  document.getElementById('barFireFill').style.width = (fire/maxVal*100)+'%';
-  document.getElementById('barIntrusionFill').style.width = (intrusion/maxVal*100)+'%';
+  document.getElementById('barHelmetFill').style.width = (helmet / maxVal * 100) + '%';
+  document.getElementById('barVestFill').style.width = (vest / maxVal * 100) + '%';
+  document.getElementById('barFireFill').style.width = (fire / maxVal * 100) + '%';
+  document.getElementById('barIntrusionFill').style.width = (intrusion / maxVal * 100) + '%';
 
-  // Events stream
   if (riskScore > 0) addEventToStream(d);
   document.getElementById('mitigationText').textContent = d.mitigation_text || '✅ No immediate action required.';
 }
 
-let lastRisk = 0;
+var lastRisk = 0;
+
 function addEventToStream(d) {
-  const riskScore = parseFloat(d.risk_score||0);
+  var riskScore = parseFloat(d.risk_score || 0);
   if (Math.abs(riskScore - lastRisk) < 0.01) return;
   lastRisk = riskScore;
   totalEvents++;
 
-  const el = document.querySelector('#eventsList .empty-state');
+  var el = document.querySelector('#eventsList .empty-state');
   if (el) el.remove();
 
-  const level = d.risk_level;
-  const item = document.createElement('div');
-  item.className = `event-item ${level.toLowerCase()}`;
-  const violations = [];
-  if (d.helmet_count > 0) violations.push(`${d.helmet_count} no-helmet`);
-  if (d.vest_count > 0) violations.push(`${d.vest_count} no-vest`);
-  if (d.fire_count > 0) violations.push(`${d.fire_count} fire/smoke`);
-  if (d.intrusion_count > 0) violations.push(`${d.intrusion_count} intrusion`);
-  const text = violations.length ? violations.join(', ') : 'Safety event detected';
-  const now = new Date().toLocaleTimeString();
-  item.innerHTML = `
-    <div class="event-dot ${level.toLowerCase()}"></div>
-    <div class="event-text">${text}</div>
-    <div class="event-zone">${level}</div>
-    <div class="event-time">${now}</div>
-  `;
-  const list = document.getElementById('eventsList');
+  var level = d.risk_level;
+  var item = document.createElement('div');
+  item.className = 'event-item ' + level.toLowerCase();
+  var violations = [];
+  if (d.helmet_count > 0) violations.push(d.helmet_count + ' no-helmet');
+  if (d.vest_count > 0) violations.push(d.vest_count + ' no-vest');
+  if (d.fire_count > 0) violations.push(d.fire_count + ' fire/smoke');
+  if (d.intrusion_count > 0) violations.push(d.intrusion_count + ' intrusion');
+  var text = violations.length ? violations.join(', ') : 'Safety event detected';
+  var now = new Date().toLocaleTimeString();
+  item.innerHTML =
+    '<div class="event-dot ' + level.toLowerCase() + '"></div>' +
+    '<div class="event-text">' + text + '</div>' +
+    '<div class="event-zone">' + level + '</div>' +
+    '<div class="event-time">' + now + '</div>';
+  var list = document.getElementById('eventsList');
   list.insertBefore(item, list.firstChild);
   while (list.children.length > 20) list.removeChild(list.lastChild);
-  document.getElementById('eventCount').textContent = `${totalEvents} EVENTS`;
+  document.getElementById('eventCount').textContent = totalEvents + ' EVENTS';
 
-  // Pathway mini terminal
   addPathwayLine(d, riskScore);
 }
 
 function addPathwayLine(d, score) {
-  const mini = document.getElementById('pathwayMini');
-  const ts = new Date().toISOString().substr(11,8);
-  const line = document.createElement('div');
+  var mini = document.getElementById('pathwayMini');
+  var ts = new Date().toISOString().substr(11, 8);
+  var line = document.createElement('div');
   line.className = 'pathway-line new';
-  line.innerHTML = `<span class="pathway-ts">[${ts}]</span> <span class="pathway-event">[ON_CHANGE]</span> <span class="pathway-score">score=${score.toFixed(2)}</span> | level=${d.risk_level} | vel=${parseFloat(d.velocity||0).toFixed(2)}`;
+  line.innerHTML =
+    '<span class="pathway-ts">[' + ts + ']</span> ' +
+    '<span class="pathway-event">[ON_CHANGE]</span> ' +
+    '<span class="pathway-score">score=' + score.toFixed(2) + '</span>' +
+    ' | level=' + d.risk_level +
+    ' | vel=' + parseFloat(d.velocity || 0).toFixed(2);
   mini.appendChild(line);
   mini.scrollTop = mini.scrollHeight;
   if (mini.children.length > 50) mini.removeChild(mini.firstChild);
 }
 
 function updatePathway(d) {
-  const score = parseFloat(d.risk_score||0);
-  const vel = parseFloat(d.velocity||0);
+  var score = parseFloat(d.risk_score || 0);
+  var vel = parseFloat(d.velocity || 0);
   document.getElementById('pwRiskScore').textContent = score.toFixed(2);
-  document.getElementById('pwVelocity').textContent = vel>=0 ? `+${vel.toFixed(4)}` : vel.toFixed(4);
-  document.getElementById('pwVelocity').style.color = vel>0 ? 'var(--red)' : 'var(--green)';
-  document.getElementById('pwPredicted').textContent = parseFloat(d.predicted_risk||0).toFixed(2);
-  document.getElementById('pwGrowth').textContent = `${parseFloat(d.growth_rate||0).toFixed(2)}%`;
-  document.getElementById('pwProb').textContent = `${(parseFloat(d.accident_probability||0)*100).toFixed(2)}%`;
-  const alert = d.alert_triggered;
+  document.getElementById('pwVelocity').textContent = vel >= 0 ? '+' + vel.toFixed(4) : vel.toFixed(4);
+  document.getElementById('pwVelocity').style.color = vel > 0 ? 'var(--red)' : 'var(--green)';
+  document.getElementById('pwPredicted').textContent = parseFloat(d.predicted_risk || 0).toFixed(2);
+  document.getElementById('pwGrowth').textContent = parseFloat(d.growth_rate || 0).toFixed(2) + '%';
+  document.getElementById('pwProb').textContent = (parseFloat(d.accident_probability || 0) * 100).toFixed(2) + '%';
+  var alert = d.alert_triggered;
   document.getElementById('pwAlert').textContent = alert ? '🚨 ALERT TRIGGERED' : '✅ CLEAR';
   document.getElementById('pwAlert').style.color = alert ? 'var(--red)' : 'var(--green)';
   document.getElementById('pwMitigation').textContent = d.mitigation_text || '';
 
-  // Terminal
-  const term = document.getElementById('pathwayTerminal');
+  var term = document.getElementById('pathwayTerminal');
   if (Math.abs(score - lastRisk) > 0.01) {
-    const ts = new Date().toISOString().substr(11,8);
-    const line = document.createElement('div');
+    var ts = new Date().toISOString().substr(11, 8);
+    var line = document.createElement('div');
     line.className = 't-line new-entry';
-    const scoreColor = score>10 ? 'red' : score>5 ? 'yellow' : 'green';
-    line.innerHTML = `<span class="t-green">[${ts}]</span> <span class="t-white">[RISK ENGINE]</span> score=<span class="t-${scoreColor}">${score.toFixed(2)}</span> | level=<span class="t-white">${d.risk_level}</span> | vel=<span class="t-${vel>0?'red':'green'}">${vel>=0?'+':''}${vel.toFixed(2)}</span> | alert=<span class="t-${alert?'red':'green'}">${alert?'🚨 YES':'✅ NO'}</span>`;
+    var scoreClass = score > 10 ? 'red' : score > 5 ? 'yellow' : 'green';
+    line.innerHTML =
+      '<span class="t-green">[' + ts + ']</span> ' +
+      '<span class="t-white">[RISK ENGINE]</span> ' +
+      'score=<span class="t-' + scoreClass + '">' + score.toFixed(2) + '</span> | ' +
+      'level=<span class="t-white">' + d.risk_level + '</span> | ' +
+      'vel=<span class="t-' + (vel > 0 ? 'red' : 'green') + '">' + (vel >= 0 ? '+' : '') + vel.toFixed(2) + '</span> | ' +
+      'alert=<span class="t-' + (alert ? 'red' : 'green') + '">' + (alert ? '🚨 YES' : '✅ NO') + '</span>';
     term.appendChild(line);
     term.scrollTop = term.scrollHeight;
     if (term.children.length > 60) term.removeChild(term.children[1]);
   }
 
-  // Risk chart
   riskHistory.push(score);
   if (riskHistory.length > 20) riskHistory.shift();
   updateRiskChart();
 }
 
 function initRiskChart() {
-  const chart = document.getElementById('riskChart');
+  var chart = document.getElementById('riskChart');
   chart.innerHTML = '';
-  for (let i=0; i<20; i++) {
-    const bar = document.createElement('div');
+  for (var i = 0; i < 20; i++) {
+    var bar = document.createElement('div');
     bar.className = 'chart-bar';
     bar.style.height = '2px';
     chart.appendChild(bar);
   }
 }
+
 function updateRiskChart() {
-  const bars = document.querySelectorAll('#riskChart .chart-bar');
-  const max = Math.max(...riskHistory, 1);
-  riskHistory.forEach((v,i) => {
-    if (bars[i]) bars[i].style.height = `${Math.max((v/max)*72, 2)}px`;
+  var bars = document.querySelectorAll('#riskChart .chart-bar');
+  var max = Math.max.apply(null, riskHistory.concat([1]));
+  riskHistory.forEach(function(v, i) {
+    if (bars[i]) bars[i].style.height = Math.max((v / max) * 72, 2) + 'px';
   });
 }
 
-// ─────────────────────────────── LEADERBOARD ───────────────────────────────
+// ══════════════════════════ RAG STATUS CHECK — NEW ══════════════════════════
+async function checkAIStatus() {
+  if (!authToken) return;
+  try {
+    var res = await apiFetch('/ai/status');
+    if (!res.ok) return;
+    var d = await res.json();
+
+    var dot = document.getElementById('ragDot');
+    var statusText = document.getElementById('ragStatusText');
+    var modelText = document.getElementById('ragModelText');
+    var dot2 = document.getElementById('ragDotPathwayPage');
+    var statusText2 = document.getElementById('ragStatusPathwayPage');
+
+    if (d.rag_pipeline_ready) {
+      // RAG fully live
+      dot.className = 'rag-dot live';
+      dot2.className = 'rag-dot live';
+      statusText.textContent = '✅ Pathway RAG pipeline LIVE — DocumentStore indexing ' + (d.safety_docs_dir || './safety_docs');
+      statusText.style.color = 'var(--green)';
+      statusText2.textContent = '✅ RAG pipeline LIVE — BM25 + KNN index ready';
+      statusText2.style.color = 'var(--green)';
+      modelText.textContent = d.model || '';
+      // Update panel title to show RAG active
+      document.getElementById('aiPanelTitle').textContent = '🤖 AI SAFETY ANALYST — PATHWAY RAG ✅ LIVE';
+      // Add RAG terminal line
+      addTerminalLine('RAG', '✅ DocumentStore live — safety_docs indexed via BM25+KNN', 'green');
+    } else if (d.llm_ready) {
+      // LLM ready but no RAG
+      dot.className = 'rag-dot pending';
+      dot2.className = 'rag-dot pending';
+      statusText.textContent = '⚡ Pathway LLM xPack ready — RAG indexing in progress...';
+      statusText.style.color = 'var(--yellow)';
+      statusText2.textContent = '⚡ LLM ready — DocumentStore still indexing...';
+      statusText2.style.color = 'var(--yellow)';
+      modelText.textContent = d.model || '';
+    } else {
+      // Nothing ready
+      dot.className = 'rag-dot pending';
+      dot2.className = 'rag-dot pending';
+      statusText.textContent = '⚡ AI pipeline initialising — LLM ready, RAG indexing...';
+      statusText.style.color = 'var(--yellow)';
+      statusText2.textContent = '⚠️ Pipeline offline';
+      statusText2.style.color = 'var(--text-dim)';
+    }
+  } catch(e) {
+    // Backend not reachable — silent
+  }
+}
+
+function addTerminalLine(tag, msg, color) {
+  var term = document.getElementById('pathwayTerminal');
+  if (!term) return;
+  var ts = new Date().toISOString().substr(11, 8);
+  var line = document.createElement('div');
+  line.className = 't-line new-entry';
+  line.innerHTML = '<span class="t-' + color + '">[' + ts + ']</span> <span class="t-' + color + '">[' + tag + ']</span> <span class="t-white">' + msg + '</span>';
+  term.appendChild(line);
+  term.scrollTop = term.scrollHeight;
+}
+
+// ══════════════════════════ LEADERBOARD ══════════════════════════
 async function loadLeaderboard() {
   try {
-    const res = await apiFetch('/leaderboard');
+    var res = await apiFetch('/leaderboard');
     if (!res.ok) return;
-    const data = await res.json();
+    var data = await res.json();
     renderLeaderboard(data);
   } catch(e) { /* silent */ }
 }
 
 function renderLeaderboard(data) {
-  if (!data.length) return;
-
-  // Zone Battle
-  const zoneBattle = document.getElementById('zoneBattle');
-  const colors = ['var(--red)', 'var(--yellow)', 'var(--green)', '#A855F7'];
-  zoneBattle.innerHTML = data.slice(0,4).map((z,i) => {
-    const pct = Math.min((z.risk_score/100)*100, 100).toFixed(1);
-    const alert = z.alert ? '🚨 HIGH' : '✅ OK';
-    return `<div class="zone-card">
-      <div class="zone-name" style="color:${colors[i%colors.length]}">${z.zone.toUpperCase()}</div>
-      <div class="zone-progress"><div class="zone-progress-fill" style="width:${pct}%;background:${colors[i%colors.length]};"></div></div>
-      <div class="zone-stats">
-        <span>Risk: ${z.risk_score.toFixed(1)}</span>
-        <span>Violations: ${z.violation_count}</span>
-        <span>${alert}</span>
-      </div>
-    </div>`;
+  if (!data || !data.length) return;
+  var colors = ['var(--red)', 'var(--yellow)', 'var(--green)', '#A855F7'];
+  var zoneBattle = document.getElementById('zoneBattle');
+  zoneBattle.innerHTML = data.slice(0, 4).map(function(z, i) {
+    var pct = Math.min((z.risk_score / 100) * 100, 100).toFixed(1);
+    var alertText = z.alert ? '🚨 HIGH' : '✅ OK';
+    return '<div class="zone-card">' +
+      '<div class="zone-name" style="color:' + colors[i % colors.length] + '">' + z.zone.toUpperCase() + '</div>' +
+      '<div class="zone-progress"><div class="zone-progress-fill" style="width:' + pct + '%;background:' + colors[i % colors.length] + ';"></div></div>' +
+      '<div class="zone-stats">' +
+        '<span>Risk: ' + z.risk_score.toFixed(1) + '</span>' +
+        '<span>Violations: ' + z.violation_count + '</span>' +
+        '<span>' + alertText + '</span>' +
+      '</div>' +
+    '</div>';
   }).join('');
 
-  // Podium
-  const sorted = [...data].sort((a,b) => b.risk_score - a.risk_score);
-  const top3 = sorted.slice(0,3);
-  const podiumOrder = top3.length>=2 ? [top3[1], top3[0], top3[2]].filter(Boolean) : top3;
-  const classes = top3.length>=2 ? ['second','first','third'] : ['first'];
-  const medals = ['🥈','🥇','🥉'];
-  document.getElementById('podium').innerHTML = podiumOrder.map((z,i) => `
-    <div class="podium-card ${classes[i]||''}">
-      <div class="podium-medal">${medals[i]}</div>
-      <div class="podium-rank">RANK #${i===1||podiumOrder.length===1?1:i===0?2:3}</div>
-      <div class="podium-name">${z.zone.toUpperCase()}</div>
-      <div class="podium-zone">${z.violation_count} violations</div>
-      <div class="podium-score">${z.risk_score.toFixed(1)}</div>
-      <div class="podium-score-label">RISK SCORE</div>
-    </div>
-  `).join('');
+  var sorted = data.slice().sort(function(a, b) { return b.risk_score - a.risk_score; });
+  var top3 = sorted.slice(0, 3);
+  var podiumOrder = top3.length >= 2 ? [top3[1], top3[0], top3[2]].filter(Boolean) : top3;
+  var classes = top3.length >= 2 ? ['second', 'first', 'third'] : ['first'];
+  var medals = ['🥈', '🥇', '🥉'];
+  document.getElementById('podium').innerHTML = podiumOrder.map(function(z, i) {
+    var rank = podiumOrder.length >= 2 ? (i === 1 ? 1 : i === 0 ? 2 : 3) : 1;
+    return '<div class="podium-card ' + (classes[i] || '') + '">' +
+      '<div class="podium-medal">' + medals[i] + '</div>' +
+      '<div class="podium-rank">RANK #' + rank + '</div>' +
+      '<div class="podium-name">' + z.zone.toUpperCase() + '</div>' +
+      '<div class="podium-zone">' + z.violation_count + ' violations</div>' +
+      '<div class="podium-score">' + z.risk_score.toFixed(1) + '</div>' +
+      '<div class="podium-score-label">RISK SCORE</div>' +
+    '</div>';
+  }).join('');
 
-  // Table
-  document.getElementById('lbTableBody').innerHTML = sorted.map((z,i) => `
-    <div class="lb-row">
-      <div class="lb-rank ${i<3?'top':''}">${i<3?['🥇','🥈','🥉'][i]:'#'+(i+1)}</div>
-      <div>
-        <div class="lb-name">${z.zone.toUpperCase()}</div>
-        <div class="lb-zone">${z.violation_count} incidents</div>
-      </div>
-      <div class="lb-scans text-mono">${z.violation_count}</div>
-      <div class="lb-points">${z.risk_score.toFixed(2)}</div>
-      <div class="lb-scans text-mono">${z.velocity}</div>
-      <div class="lb-status"><div class="tag ${z.alert?'tag-red':'tag-green'}">${z.alert?'HIGH':'OK'}</div></div>
-    </div>
-  `).join('');
+  document.getElementById('lbTableBody').innerHTML = sorted.map(function(z, i) {
+    return '<div class="lb-row">' +
+      '<div class="lb-rank ' + (i < 3 ? 'top' : '') + '">' + (i < 3 ? ['🥇','🥈','🥉'][i] : '#' + (i + 1)) + '</div>' +
+      '<div><div class="lb-name">' + z.zone.toUpperCase() + '</div><div class="lb-zone">' + z.violation_count + ' incidents</div></div>' +
+      '<div class="lb-scans text-mono">' + z.violation_count + '</div>' +
+      '<div class="lb-points">' + z.risk_score.toFixed(2) + '</div>' +
+      '<div class="lb-scans text-mono">' + z.velocity + '</div>' +
+      '<div><div class="tag ' + (z.alert ? 'tag-red' : 'tag-green') + '">' + (z.alert ? 'HIGH' : 'OK') + '</div></div>' +
+    '</div>';
+  }).join('');
 }
 
-// ─────────────────────────────── DETECTION ───────────────────────────────
-let selectedImage = null;
-let selectedVideo = null;
+// ══════════════════════════ IMAGE / VIDEO DETECTION ══════════════════════════
+var selectedImage = null;
+var selectedVideo = null;
 
 function handleImageSelect(e) {
-  const file = e.target.files[0];
+  var file = e.target.files[0];
   if (!file) return;
   selectedImage = file;
-  const url = URL.createObjectURL(file);
-  const wrap = document.getElementById('imagePreviewWrap');
+  var url = URL.createObjectURL(file);
+  var wrap = document.getElementById('imagePreviewWrap');
   wrap.style.display = 'block';
-  wrap.innerHTML = `<img src="${url}" alt="Preview">`;
+  wrap.innerHTML = '<img src="' + url + '" alt="Preview">';
 }
 
 function handleVideoSelect(e) {
-  const file = e.target.files[0];
+  var file = e.target.files[0];
   if (!file) return;
   selectedVideo = file;
-  const url = URL.createObjectURL(file);
-  const wrap = document.getElementById('videoPreviewWrap');
+  var url = URL.createObjectURL(file);
+  var wrap = document.getElementById('videoPreviewWrap');
   wrap.style.display = 'block';
-  wrap.innerHTML = `<video src="${url}" controls></video>`;
+  wrap.innerHTML = '<video src="' + url + '" controls></video>';
 }
 
 function clearImage() {
@@ -1310,6 +1480,7 @@ function clearImage() {
   document.getElementById('imagePreviewWrap').style.display = 'none';
   document.getElementById('imagePreviewWrap').innerHTML = '';
 }
+
 function clearVideo() {
   selectedVideo = null;
   document.getElementById('videoFile').value = '';
@@ -1320,23 +1491,22 @@ function clearVideo() {
 
 async function detectImage() {
   if (!selectedImage) { toast('Please select an image first', 'error'); return; }
-  const btn = document.getElementById('imgBtnText');
+  var btn = document.getElementById('imgBtnText');
   btn.textContent = 'ANALYZING...';
-  const formData = new FormData();
+  var formData = new FormData();
   formData.append('file', selectedImage);
   try {
-    const res = await fetch(`${API_BASE}/detect/image`, {
+    var res = await fetch(API_BASE + '/detect/image', {
       method: 'POST',
-      headers: { Authorization: `Bearer ${authToken}` },
+      headers: { Authorization: 'Bearer ' + authToken },
       body: formData
     });
     if (!res.ok) throw new Error('Detection failed');
-    const data = await res.json();
+    var data = await res.json();
     showDetectionResult(data, 1);
-    toast(`Detection complete: ${data.violations.length} violations found`, data.violations.length > 0 ? 'error' : 'success');
+    toast('Detection complete: ' + data.violations.length + ' violations found', data.violations.length > 0 ? 'error' : 'success');
   } catch(e) {
     toast('Detection failed. Is the backend running?', 'error');
-    // Show mock result for demo
     showDetectionResult({ violations: [], risk_score: 0, frame_count: 1 }, 1);
   } finally {
     btn.textContent = 'ANALYZE IMAGE';
@@ -1345,135 +1515,427 @@ async function detectImage() {
 
 async function detectVideo() {
   if (!selectedVideo) { toast('Please select a video first', 'error'); return; }
-  const btn = document.getElementById('vidBtnText');
+  var btn = document.getElementById('vidBtnText');
   btn.textContent = 'PROCESSING...';
   document.getElementById('videoProgressWrap').style.display = 'block';
-  
-  // Animate progress bar while uploading
-  let prog = 0;
-  const interval = setInterval(() => {
-    prog = Math.min(prog + Math.random()*3, 90);
-    document.getElementById('videoProgressFill').style.width = prog+'%';
-    document.getElementById('videoProgressPct').textContent = prog.toFixed(0)+'%';
+
+  var prog = 0;
+  var interval = setInterval(function() {
+    prog = Math.min(prog + Math.random() * 3, 90);
+    document.getElementById('videoProgressFill').style.width = prog + '%';
+    document.getElementById('videoProgressPct').textContent = prog.toFixed(0) + '%';
   }, 200);
 
-  const formData = new FormData();
+  var formData = new FormData();
   formData.append('file', selectedVideo);
   try {
-    const res = await fetch(`${API_BASE}/detect/video`, {
+    var res = await fetch(API_BASE + '/detect/video', {
       method: 'POST',
-      headers: { Authorization: `Bearer ${authToken}` },
+      headers: { Authorization: 'Bearer ' + authToken },
       body: formData
     });
     if (!res.ok) throw new Error('Detection failed');
-    const data = await res.json();
+    var data = await res.json();
     clearInterval(interval);
     document.getElementById('videoProgressFill').style.width = '100%';
     document.getElementById('videoProgressPct').textContent = '100%';
     showDetectionResult(data, data.frame_count);
-    toast(`Video analyzed: ${data.frame_count} frames, ${data.violations.length} violations`, 'success');
+    toast('Video analyzed: ' + data.frame_count + ' frames, ' + data.violations.length + ' violations', 'success');
   } catch(e) {
     clearInterval(interval);
     toast('Video detection failed. Is the backend running?', 'error');
     showDetectionResult({ violations: [], risk_score: 0, frame_count: 0 }, 0);
   } finally {
     btn.textContent = 'ANALYZE VIDEO';
-    setTimeout(() => { document.getElementById('videoProgressWrap').style.display = 'none'; }, 2000);
+    setTimeout(function() { document.getElementById('videoProgressWrap').style.display = 'none'; }, 2000);
   }
 }
 
 function showDetectionResult(data, frames) {
   document.getElementById('noResult').style.display = 'none';
-  const rc = document.getElementById('resultContent');
+  var rc = document.getElementById('resultContent');
   rc.style.display = 'flex';
 
-  const risk = parseFloat(data.risk_score || 0);
-  const level = risk > 100 ? 'CRITICAL' : risk > 50 ? 'HIGH' : risk > 20 ? 'MEDIUM' : 'LOW';
-  document.getElementById('resultRiskScore').textContent = risk.toFixed(2);
-  document.getElementById('resultRiskScore').style.color = risk > 50 ? 'var(--red)' : risk > 20 ? 'var(--yellow)' : 'var(--green)';
-  document.getElementById('resultBadge').textContent = level + ' RISK';
-  document.getElementById('resultBadge').className = `tag ${risk>50?'tag-red':risk>20?'tag-yellow':'tag-green'}`;
-  document.getElementById('resultRiskBadge').textContent = level + ' RISK';
-  document.getElementById('resultRiskBadge').className = `tag ${risk>50?'tag-red':risk>20?'tag-yellow':'tag-green'}`;
-  document.getElementById('resultViolationCount').textContent = data.violations?.length || 0;
-  document.getElementById('resultFrameCount').textContent = frames === 1 ? 'IMAGE' : frames;
+  var risk = parseFloat(data.risk_score || 0);
+  var level = risk > 100 ? 'CRITICAL' : risk > 50 ? 'HIGH' : risk > 20 ? 'MEDIUM' : 'LOW';
+  var colorClass = risk > 50 ? 'tag-red' : risk > 20 ? 'tag-yellow' : 'tag-green';
+  var riskColor = risk > 50 ? 'var(--red)' : risk > 20 ? 'var(--yellow)' : 'var(--green)';
 
-  const icons = { no_helmet:'🪖', no_vest:'🦺', fire:'🔥', smoke:'💨', restricted_zone:'⛔', unknown:'⚠️' };
-  const list = document.getElementById('violationsList');
-  if (!data.violations?.length) {
+  document.getElementById('resultRiskScore').textContent = risk.toFixed(2);
+  document.getElementById('resultRiskScore').style.color = riskColor;
+  document.getElementById('resultBadge').textContent = level + ' RISK';
+  document.getElementById('resultBadge').className = 'tag ' + colorClass;
+  document.getElementById('resultRiskBadge').textContent = level + ' RISK';
+  document.getElementById('resultRiskBadge').className = 'tag ' + colorClass;
+  document.getElementById('resultViolationCount').textContent = (data.violations && data.violations.length) || 0;
+  document.getElementById('resultFrameCount').textContent = frames === 1 ? 'IMAGE' : (frames || '—');
+
+  if (data.annotated_image) {
+    document.getElementById('annotatedImage').src = 'data:image/jpeg;base64,' + data.annotated_image;
+    document.getElementById('annotatedImageWrap').style.display = 'block';
+  } else {
+    document.getElementById('annotatedImageWrap').style.display = 'none';
+  }
+
+  var icons = { no_helmet: '🪖', no_vest: '🦺', fire: '🔥', smoke: '💨', restricted_zone: '⛔', unknown: '⚠️' };
+  var list = document.getElementById('violationsList');
+
+  if (!data.violations || !data.violations.length) {
     list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">✅</div><div class="empty-state-title">No Violations Detected</div></div>';
   } else {
-    list.innerHTML = data.violations.map(v => {
-      const conf = (v.confidence * 100).toFixed(1);
-      return `<div class="violation-item">
-        <div class="violation-icon">${icons[v.type]||'⚠️'}</div>
-        <div style="flex:1;">
-          <div class="violation-name">${v.type.replace(/_/g,' ').toUpperCase()}</div>
-          <div style="font-size:11px;color:var(--text-dim);">Zone: ${v.zone} | BBox: [${(v.bbox||[]).join(', ')}]</div>
-          <div class="confidence-bar"><div class="confidence-fill" style="width:${conf}%;"></div></div>
-        </div>
-        <div class="violation-conf">${conf}%</div>
-      </div>`;
+    list.innerHTML = data.violations.map(function(v) {
+      var conf = (v.confidence * 100).toFixed(1);
+      var icon = icons[v.type] || '⚠️';
+      var bbox = (v.bbox || []).map(function(n) { return Math.round(n); }).join(', ');
+      return '<div class="violation-item">' +
+        '<div class="violation-icon">' + icon + '</div>' +
+        '<div style="flex:1;">' +
+          '<div class="violation-name">' + v.type.replace(/_/g, ' ').toUpperCase() + '</div>' +
+          '<div style="font-size:11px;color:var(--text-dim);">Zone: ' + v.zone + ' | BBox: [' + bbox + ']</div>' +
+          '<div class="confidence-bar"><div class="confidence-fill" style="width:' + conf + '%;"></div></div>' +
+        '</div>' +
+        '<div class="violation-conf">' + conf + '%</div>' +
+      '</div>';
     }).join('');
   }
 }
 
-async function pushManualEvent() {
-  const violation_type = document.getElementById('manualViolation').value;
-  const zone = document.getElementById('manualZone').value;
-  const confidence = parseFloat(document.getElementById('manualConf').value);
-  const camera_id = document.getElementById('manualCam').value;
+// ══════════════════════════ AI EXPLANATION — updated for RAG ══════════════════════════
+async function getAIExplanation() {
+  var btn = document.getElementById('aiExplainBtn');
+  btn.textContent = '🤖 ANALYZING WITH PATHWAY RAG...';
+  btn.disabled = true;
   try {
-    const res = await apiFetch('/event', {
+    var res = await apiFetch('/ai/explain');
+    if (!res.ok) throw new Error('AI request failed');
+    var data = await res.json();
+    renderAIReport(data);
+    if (data.email_sent) {
+      document.getElementById('aiEmailBadge').style.display = 'inline-block';
+      toast('📧 Critical alert email sent to safety officer!', 'error');
+    }
+    if (data.rag_used) {
+      toast('🔍 RAG-powered report generated from live safety rulebook', 'success');
+    } else {
+      toast('AI safety report generated', 'success');
+    }
+  } catch(e) {
+    toast('AI analysis failed — check OPENROUTER_API_KEY in .env', 'error');
+  } finally {
+    btn.textContent = '🤖 GET AI SAFETY REPORT';
+    btn.disabled = false;
+  }
+}
+
+async function getAICached() {
+  try {
+    var res = await apiFetch('/ai/cached');
+    if (!res.ok) throw new Error();
+    var data = await res.json();
+    if (!data.text) { toast('No cached report yet — click GET AI SAFETY REPORT first', 'info'); return; }
+    renderAIReport(data);
+    toast('Loaded cached AI report', 'info');
+  } catch(e) {
+    toast('No cached report available', 'info');
+  }
+}
+
+function renderAIReport(data) {
+  var rawText = data.text || data.explanation || '';
+
+  // Detect if RAG was used from prefix or rag_used flag
+  var ragUsed = data.rag_used || rawText.indexOf('[RAG-powered') === 0;
+
+  // Strip the prefix tag from display text — show clean report to user
+  var cleanText = rawText
+    .replace(/^\[RAG-powered[^\]]*\]\s*/i, '')
+    .replace(/^\[Pathway LLM xPack[^\]]*\]\s*/i, '')
+    .replace(/^\[Direct LLM[^\]]*\]\s*/i, '')
+    .replace(/^\[OpenRouter fallback\]\s*/i, '')
+    .trim();
+
+  document.getElementById('aiExplainText').textContent = cleanText;
+  document.getElementById('aiRiskScore').textContent = parseFloat(data.risk_score || 0).toFixed(2);
+  document.getElementById('aiRiskLevel').textContent = data.risk_level || '—';
+
+  var ts = data.generated_at ? new Date(data.generated_at).toLocaleTimeString() : '—';
+  document.getElementById('aiGeneratedAt').textContent = 'Generated: ' + ts;
+
+  document.getElementById('aiExplainBox').style.display = 'block';
+
+  // Show/hide RAG-specific UI
+  if (ragUsed) {
+    document.getElementById('aiRagBadge').style.display = 'inline-block';
+    document.getElementById('aiReportSourceBadge').style.display = 'inline-block';
+    document.getElementById('aiRagContextRow').style.display = 'block';
+    document.getElementById('aiRagContextText').textContent =
+      'OSHA safety rules retrieved from live Pathway DocumentStore (BM25 + KNN index) and injected into LLM prompt.';
+    // Update RAG dot to live
+    var dot = document.getElementById('ragDot');
+    dot.className = 'rag-dot live';
+  } else {
+    document.getElementById('aiRagBadge').style.display = 'none';
+    document.getElementById('aiReportSourceBadge').style.display = 'none';
+    document.getElementById('aiRagContextRow').style.display = 'none';
+  }
+
+  // Add to terminal
+  addTerminalLine('AI', 'Report generated | rag=' + (ragUsed ? 'YES' : 'NO') + ' | risk=' + parseFloat(data.risk_score || 0).toFixed(2), ragUsed ? 'green' : 'yellow');
+}
+
+async function pushManualEvent() {
+  var violation_type = document.getElementById('manualViolation').value;
+  var zone = document.getElementById('manualZone').value;
+  var confidence = parseFloat(document.getElementById('manualConf').value);
+  var camera_id = document.getElementById('manualCam').value;
+  try {
+    var res = await apiFetch('/event', {
       method: 'POST',
-      body: JSON.stringify({ violation_type, zone, confidence, camera_id })
+      body: JSON.stringify({ violation_type: violation_type, zone: zone, confidence: confidence, camera_id: camera_id })
     });
     if (!res.ok) throw new Error();
-    toast(`⚡ Event pushed to Pathway: ${violation_type} @ ${zone}`, 'success');
+    toast('⚡ Event pushed to Pathway: ' + violation_type + ' @ ' + zone, 'success');
   } catch(e) {
     toast('Push failed. Check backend connection.', 'error');
   }
 }
 
-// ─────────────────────────────── DRAG & DROP ───────────────────────────────
-['imageDropZone', 'videoDropZone'].forEach(id => {
-  const zone = document.getElementById(id);
-  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
-  zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
-  zone.addEventListener('drop', e => {
+// ══════════════════════════ LIVE CAMERA ══════════════════════════
+var liveCamStream = null;
+var liveCamInterval = null;
+var cameraActive = false;
+var snapCooldown = false;
+
+async function toggleLiveCamera() {
+  if (cameraActive) {
+    stopLiveCamera();
+  } else {
+    await startLiveCamera();
+  }
+}
+
+async function startLiveCamera() {
+  try {
+    liveCamStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
+      audio: false
+    });
+  } catch(e1) {
+    try {
+      liveCamStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+    } catch(e2) {
+      toast('Camera access denied. Allow camera in browser settings.', 'error');
+      return;
+    }
+  }
+
+  var video = document.getElementById('liveCamFeed');
+  video.srcObject = liveCamStream;
+  video.style.display = 'block';
+
+  await new Promise(function(resolve) {
+    video.onloadedmetadata = function() { video.play(); resolve(); };
+  });
+
+  document.getElementById('liveCamPlaceholder').style.display = 'none';
+  document.getElementById('camLiveBadge').classList.add('active');
+  document.getElementById('liveCamTag').style.display = 'inline-block';
+  document.getElementById('liveCamBtn').textContent = 'STOP CAMERA';
+  document.getElementById('liveCamBtn').style.background = 'var(--red-dim)';
+  document.getElementById('snapBtn').disabled = false;
+  document.getElementById('liveCamStatusText').textContent = '🔴 Auto-analyzing every 5 seconds via YOLO...';
+  cameraActive = true;
+
+  liveCamInterval = setInterval(snapAndAnalyze, 5000);
+  toast('Camera active — YOLO scanning every 5s', 'success');
+}
+
+function stopLiveCamera() {
+  if (liveCamStream) {
+    liveCamStream.getTracks().forEach(function(t) { t.stop(); });
+    liveCamStream = null;
+  }
+  if (liveCamInterval) {
+    clearInterval(liveCamInterval);
+    liveCamInterval = null;
+  }
+  cameraActive = false;
+
+  var video = document.getElementById('liveCamFeed');
+  video.srcObject = null;
+  video.style.display = 'none';
+
+  document.getElementById('liveCamPlaceholder').style.display = 'flex';
+  document.getElementById('camLiveBadge').classList.remove('active');
+  document.getElementById('liveCamTag').style.display = 'none';
+  document.getElementById('liveCamBtn').textContent = 'START CAMERA';
+  document.getElementById('liveCamBtn').style.background = '';
+  document.getElementById('snapBtn').disabled = true;
+  document.getElementById('liveCamStatusText').textContent = 'Camera stopped.';
+}
+
+async function snapAndAnalyze() {
+  if (!cameraActive || snapCooldown) return;
+  var video = document.getElementById('liveCamFeed');
+  if (!video || video.readyState < 2) return;
+
+  snapCooldown = true;
+  setTimeout(function() { snapCooldown = false; }, 1000);
+
+  var flashEl = document.getElementById('camSnapOverlay');
+  flashEl.classList.add('flash');
+  setTimeout(function() { flashEl.classList.remove('flash'); }, 150);
+
+  var canvas = document.getElementById('liveCamCanvas');
+  canvas.width = video.videoWidth || 640;
+  canvas.height = video.videoHeight || 480;
+  var ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  canvas.toBlob(async function(blob) {
+    if (!blob || !authToken) return;
+    var formData = new FormData();
+    formData.append('file', blob, 'live_snapshot.jpg');
+
+    try {
+      var res = await fetch(API_BASE + '/detect/image', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + authToken },
+        body: formData
+      });
+      if (!res.ok) return;
+      var data = await res.json();
+
+      showDetectionResult(data, 1);
+
+      if (data.violations && data.violations.length > 0) {
+        showViolationAlert(data.violations, data.risk_score);
+      }
+
+      var ts = new Date().toLocaleTimeString();
+      var count = (data.violations && data.violations.length) || 0;
+      document.getElementById('liveCamStatusText').textContent =
+        '🔴 Last scan: ' + ts + ' — ' + count + ' violation(s) found';
+
+    } catch(e) {
+      // silent
+    }
+  }, 'image/jpeg', 0.85);
+}
+
+// ══════════════════════════ VIOLATION ALERT POPUP ══════════════════════════
+var popupDismissTimer = null;
+
+function showViolationAlert(violations, riskScore) {
+  var existing = document.getElementById('violationAlertPopup');
+  if (existing) {
+    existing.remove();
+    if (popupDismissTimer) { clearTimeout(popupDismissTimer); popupDismissTimer = null; }
+  }
+
+  var risk = parseFloat(riskScore || 0);
+  var isCritical = risk > 50 || violations.some(function(v) {
+    return v.type === 'fire' || v.type === 'smoke';
+  });
+
+  var accentColor = isCritical ? 'var(--red)' : 'var(--yellow)';
+  var titleText = isCritical ? '🚨 CRITICAL VIOLATION DETECTED' : '⚠️ SAFETY VIOLATION DETECTED';
+  var popupClass = isCritical ? 'violation-popup critical' : 'violation-popup warning';
+
+  var icons = { no_helmet: '🪖', no_vest: '🦺', fire: '🔥', smoke: '💨', restricted_zone: '⛔' };
+
+  var rows = violations.map(function(v) {
+    var conf = (v.confidence * 100).toFixed(1);
+    var icon = icons[v.type] || '⚠️';
+    return '<div class="popup-viol-row">' +
+      '<span class="popup-viol-icon">' + icon + '</span>' +
+      '<span class="popup-viol-name">' + v.type.replace(/_/g, ' ').toUpperCase() + '</span>' +
+      '<span class="popup-viol-conf" style="color:' + accentColor + '">' + conf + '%</span>' +
+      '<span class="popup-viol-zone">' + (v.zone || '') + '</span>' +
+    '</div>';
+  }).join('');
+
+  var popup = document.createElement('div');
+  popup.id = 'violationAlertPopup';
+  popup.className = popupClass;
+  popup.innerHTML =
+    '<div class="popup-header">' +
+      '<div class="popup-title">' +
+        '<div class="popup-title-dot" style="background:' + accentColor + ';"></div>' +
+        '<span class="popup-title-text" style="color:' + accentColor + '">' + titleText + '</span>' +
+      '</div>' +
+      '<button class="popup-close" onclick="dismissViolationAlert()">✕</button>' +
+    '</div>' +
+    rows +
+    '<div class="popup-footer">' +
+      '<span class="popup-risk">RISK SCORE: <strong style="color:' + accentColor + '">' + risk.toFixed(2) + '</strong></span>' +
+      '<span class="popup-time">' + new Date().toLocaleTimeString() + '</span>' +
+    '</div>' +
+    (!isCritical ?
+      '<div class="popup-dismiss-bar"><div class="popup-dismiss-fill" style="background:' + accentColor + '"></div></div>'
+    : '');
+
+  document.body.appendChild(popup);
+
+  if (!isCritical) {
+    popupDismissTimer = setTimeout(dismissViolationAlert, 6000);
+  }
+}
+
+function dismissViolationAlert() {
+  var popup = document.getElementById('violationAlertPopup');
+  if (popup) {
+    popup.style.opacity = '0';
+    popup.style.transition = 'opacity .3s';
+    setTimeout(function() { if (popup.parentNode) popup.remove(); }, 300);
+  }
+  if (popupDismissTimer) { clearTimeout(popupDismissTimer); popupDismissTimer = null; }
+}
+
+// ══════════════════════════ DRAG & DROP ══════════════════════════
+['imageDropZone', 'videoDropZone'].forEach(function(id) {
+  var zone = document.getElementById(id);
+  zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.classList.add('dragover'); });
+  zone.addEventListener('dragleave', function() { zone.classList.remove('dragover'); });
+  zone.addEventListener('drop', function(e) {
     e.preventDefault();
     zone.classList.remove('dragover');
-    const file = e.dataTransfer.files[0];
+    var file = e.dataTransfer.files[0];
     if (!file) return;
     if (id === 'imageDropZone' && file.type.startsWith('image/')) {
       selectedImage = file;
-      const url = URL.createObjectURL(file);
-      const wrap = document.getElementById('imagePreviewWrap');
+      var imgUrl = URL.createObjectURL(file);
+      var wrap = document.getElementById('imagePreviewWrap');
       wrap.style.display = 'block';
-      wrap.innerHTML = `<img src="${url}">`;
+      wrap.innerHTML = '<img src="' + imgUrl + '">';
     } else if (id === 'videoDropZone' && file.type.startsWith('video/')) {
       selectedVideo = file;
-      const url = URL.createObjectURL(file);
-      const wrap = document.getElementById('videoPreviewWrap');
-      wrap.style.display = 'block';
-      wrap.innerHTML = `<video src="${url}" controls></video>`;
+      var vidUrl = URL.createObjectURL(file);
+      var wrap2 = document.getElementById('videoPreviewWrap');
+      wrap2.style.display = 'block';
+      wrap2.innerHTML = '<video src="' + vidUrl + '" controls></video>';
     }
   });
 });
 
-// ─────────────────────────────── TOAST ───────────────────────────────
-function toast(msg, type='info') {
-  const container = document.getElementById('toastContainer');
-  const t = document.createElement('div');
-  t.className = `toast ${type}`;
+// ══════════════════════════ TOAST ══════════════════════════
+function toast(msg, type) {
+  type = type || 'info';
+  var container = document.getElementById('toastContainer');
+  var t = document.createElement('div');
+  t.className = 'toast ' + type;
   t.textContent = msg;
   container.appendChild(t);
-  setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity .3s'; setTimeout(()=>t.remove(), 300); }, 3500);
+  setTimeout(function() {
+    t.style.opacity = '0';
+    t.style.transition = 'opacity .3s';
+    setTimeout(function() { if (t.parentNode) t.remove(); }, 300);
+  }, 3500);
 }
 
-// ─────────────────────────────── ENTER KEY ───────────────────────────────
-document.getElementById('loginPassword').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
-document.getElementById('loginEmail').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+// ══════════════════════════ ENTER KEY ══════════════════════════
+document.getElementById('loginPassword').addEventListener('keydown', function(e) { if (e.key === 'Enter') doLogin(); });
+document.getElementById('loginEmail').addEventListener('keydown', function(e) { if (e.key === 'Enter') doLogin(); });
 </script>
 </body>
 </html>
