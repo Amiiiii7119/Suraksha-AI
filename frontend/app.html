@@ -1654,7 +1654,17 @@ function renderAIReport(data) {
     .replace(/^\[OpenRouter fallback\]\s*/i, '')
     .trim();
 
-  document.getElementById('aiExplainText').textContent = cleanText;
+  document.getElementById('aiExplainText').innerHTML = cleanText
+    .replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/### (.*?)(\n|$)/g, '<h4 style="color:var(--green);font-family:var(--font-mono);margin:12px 0 6px;font-size:12px;letter-spacing:1px;">$1</h4>')
+    .replace(/## (.*?)(\n|$)/g, '<h3 style="color:var(--green);font-family:var(--font-mono);margin:12px 0 6px;">$1</h3>')
+    .replace(/---/g, '<hr style="border-color:var(--border);margin:10px 0;">')
+    .replace(/\| \*\*(.*?)\*\* \|/g, '<strong>$1</strong>')
+    .replace(/\|[-| ]+\|/g, '')
+    .replace(/\|(.*?)\|/g, '<span style="display:inline-block;padding:2px 8px;border-right:1px solid var(--border);">$1</span>')
+    .replace(/\n\n/g, '<br><br>')
+    .replace(/\n/g, '<br>');
   document.getElementById('aiRiskScore').textContent = parseFloat(data.risk_score || 0).toFixed(2);
   document.getElementById('aiRiskLevel').textContent = data.risk_level || '—';
 

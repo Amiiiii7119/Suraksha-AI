@@ -7,45 +7,32 @@ from app.core.risk_engine import subject
 from app.db.database import SessionLocal
 from app.db.models import Incident
 
-
-
-
+# ── Import update_zone_tracker from main to keep leaderboard in sync ──
+# We import lazily inside the loop to avoid circular import at module load
+# time (main imports simulator, simulator would import main).
 
 MIN_INTERVAL = 2.0
 MAX_INTERVAL = 6.0
 
-
+# FIXED: violation types now match RISK_WEIGHTS keys in risk_engine.py
 VIOLATION_POOL = [
-    ("no_helmet",    0.30),   
-    ("no_vest",      0.25),
-    ("person",       0.15),
-    ("intrusion",    0.12),
-    ("fire_smoke",   0.08),
-    ("hardhat",      0.06),
-    ("fire",         0.04),
+    ("no_helmet",       0.30),
+    ("no_vest",         0.25),
+    ("restricted_zone", 0.15),
+    ("fire",            0.12),
+    ("smoke",           0.08),
 ]
 
-ZONES = [
-    "construction_site",
-    "warehouse_a",
-    "loading_bay",
-    "electrical_room",
-    "rooftop_zone",
-    "boiler_room",
-    "entry_gate",
-]
-
+# FIXED: zones now match ZONE_MULTIPLIERS keys in risk_engine.py
+ZONES = ["zone_a", "zone_b", "zone_c", "zone_d"]
 
 CONFIDENCE_RANGE = {
-    "no_helmet":   (0.55, 0.97),
-    "no_vest":     (0.50, 0.95),
-    "person":      (0.70, 0.99),
-    "intrusion":   (0.60, 0.92),
-    "fire_smoke":  (0.45, 0.90),
-    "hardhat":     (0.65, 0.98),
-    "fire":        (0.40, 0.88),
+    "no_helmet":       (0.55, 0.97),
+    "no_vest":         (0.50, 0.95),
+    "restricted_zone": (0.60, 0.92),
+    "fire":            (0.40, 0.88),
+    "smoke":           (0.45, 0.90),
 }
-
 
 _simulator_running = False
 _simulator_thread: threading.Thread | None = None
@@ -69,13 +56,16 @@ def _generate_event():
 def _simulator_loop():
     global _simulator_running, _events_generated
 
+    # Lazy import to avoid circular import
+    from app.main import update_zone_tracker
+
     print("[SIMULATOR] 🟢 Simulation started.")
 
     while _simulator_running:
         try:
             violation_type, zone, confidence, ts = _generate_event()
 
-            
+            # Push to Pathway stream
             subject.push(
                 timestamp=ts,
                 violation_type=violation_type,
@@ -84,7 +74,10 @@ def _simulator_loop():
                 camera_id="simulator",
             )
 
-            
+            # FIXED: also update zone_tracker so leaderboard stays in sync
+            update_zone_tracker(violation_type, zone, confidence)
+
+            # Save to DB
             db = SessionLocal()
             try:
                 db.add(Incident(
@@ -101,18 +94,15 @@ def _simulator_loop():
             _events_generated += 1
             print(
                 f"[SIMULATOR] Event #{_events_generated:04d} | "
-                f"{violation_type:<15} | zone: {zone:<20} | conf: {confidence:.2f}"
+                f"{violation_type:<15} | zone: {zone:<10} | conf: {confidence:.2f}"
             )
 
         except Exception as e:
             print(f"[SIMULATOR] ⚠️  Error: {e}")
 
-        # Random delay between events
         time.sleep(random.uniform(MIN_INTERVAL, MAX_INTERVAL))
 
     print("[SIMULATOR] 🔴 Simulation stopped.")
-
-
 
 
 def start_simulator():

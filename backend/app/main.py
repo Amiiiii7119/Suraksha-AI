@@ -84,7 +84,7 @@ def _make_llm() -> LiteLLMChat:
         api_key=OPENROUTER_API_KEY,
         api_base=OPENROUTER_BASE_URL,
         temperature=0.3,
-        max_tokens=400,
+        max_tokens=800,
     )
 
 
@@ -148,11 +148,10 @@ def init_rag():
             model="huggingface/sentence-transformers/all-MiniLM-L6-v2",
         )
 
-        
         retriever_factory = BruteForceKnnFactory(
             reserved_space=1000,
             embedder=embedder,
-            metric=BruteForceKnnMetricKind.COS, 
+            metric=BruteForceKnnMetricKind.COS,
             dimensions=384,
         )
 
@@ -182,7 +181,6 @@ def init_rag():
             print(f"[RAG] ❌ LLM fallback also failed: {e2}")
 
 
-
 class UserCreate(BaseModel):
     name: str
     email: str
@@ -202,7 +200,6 @@ class EventPayload(BaseModel):
 
 class ExplainRequest(BaseModel):
     force: bool = False
-
 
 
 zone_tracker: dict = {
@@ -242,7 +239,6 @@ def update_zone_tracker(violation_type: str, zone: str, confidence: float):
         zone_tracker[normalized_zone]["velocity"]        = round(new_score - prev, 4)
         zone_tracker[normalized_zone]["previous_risk"]   = prev
         zone_tracker[normalized_zone]["alert"]           = new_score > ALERT_THRESHOLD
-
 
 
 def send_alert_email(state: dict, explanation: str = ""):
@@ -310,7 +306,6 @@ def send_alert_email(state: dict, explanation: str = ""):
     threading.Thread(target=_send, daemon=True).start()
 
 
-
 async def get_ai_explanation(state: dict) -> str:
     with zone_tracker_lock:
         zones_sorted = sorted(
@@ -330,8 +325,20 @@ async def get_ai_explanation(state: dict) -> str:
     rag_used = False
     if doc_store is not None:
         try:
+            # dynamic query based on actual current violations
+            query_parts = []
+            if state['helmet_count'] > 0:
+                query_parts.append("worker without helmet PPE violation")
+            if state['fire_count'] > 0:
+                query_parts.append("fire smoke emergency evacuation")
+            if state['vest_count'] > 0:
+                query_parts.append("safety vest PPE compliance")
+            if state['intrusion_count'] > 0:
+                query_parts.append("restricted zone unauthorized entry")
+            dynamic_query = " ".join(query_parts) if query_parts else "general construction site safety rules"
+
             results = list(doc_store.retrieve(  # type: ignore[attr-defined]
-                query="PPE helmet vest fire intrusion OSHA construction safety rules",
+                query=dynamic_query,
                 k=3,
             ))
             if results:
@@ -364,7 +371,27 @@ VIOLATIONS IN CURRENT 10-SECOND WINDOW:
 
 HIGHEST RISK ZONE: {top_zone[0].upper()} (score: {top_zone[1]['risk_score']:.2f}, violations: {top_zone[1]['violation_count']})
 CURRENT MITIGATION: {state['mitigation_text']}{rag_section}
-Write a concise 3-sentence safety report for the site supervisor. Be direct, urgent if needed, and actionable."""
+Write a safety report using EXACTLY this format with line breaks:
+
+**SITUATION SUMMARY**
+[2 sentences about current site status]
+
+**CRITICAL VIOLATIONS**
+- Fire/Smoke: [count] detected → [action]
+- No Helmet: [count] detected → [action]
+- No Vest: [count] detected → [action]
+- Intrusions: [count] detected → [action]
+
+**IMMEDIATE STEPS**
+1. [action]
+2. [action]
+3. [action]
+
+**OSHA REFERENCE**
+- [cite relevant rule]
+- [cite relevant rule]
+
+Be urgent. Use exact counts from the data above."""
 
     if llm is not None:
         try:
@@ -374,7 +401,7 @@ Write a concise 3-sentence safety report for the site supervisor. Be direct, urg
                 api_key=OPENROUTER_API_KEY,
                 api_base=OPENROUTER_BASE_URL,
                 messages=[{"role": "user", "content": prompt}],
-                max_tokens=400,
+                max_tokens=800,
                 temperature=0.3,
             )
             choices = getattr(response, "choices", [])
@@ -390,7 +417,7 @@ Write a concise 3-sentence safety report for the site supervisor. Be direct, urg
     if not OPENROUTER_API_KEY:
         return "AI analysis unavailable. Add OPENROUTER_API_KEY to your .env file."
     try:
-        async with httpx.AsyncClient(timeout=15.0) as client:
+        async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.post(
                 "https://openrouter.ai/api/v1/chat/completions",
                 headers={
@@ -402,7 +429,7 @@ Write a concise 3-sentence safety report for the site supervisor. Be direct, urg
                 json={
                     "model": OPENROUTER_MODEL,
                     "messages": [{"role": "user", "content": prompt}],
-                    "max_tokens": 250,
+                    "max_tokens": 800,
                     "temperature": 0.4,
                 }
             )
@@ -415,9 +442,7 @@ Write a concise 3-sentence safety report for the site supervisor. Be direct, urg
         return f"AI analysis unavailable: {str(e)}"
 
 
-
 Base.metadata.create_all(bind=db_engine)
-
 
 
 def create_default_admin():
@@ -445,7 +470,6 @@ def create_default_admin():
         db.close()
 
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     create_default_admin()
@@ -457,7 +481,6 @@ async def lifespan(app: FastAPI):
     print("[STARTUP] ✅ Simulator started.")
     yield
     print("[SHUTDOWN] FastAPI shutting down.")
-
 
 
 app = FastAPI(
@@ -487,7 +510,6 @@ yolo = YoloEngine()
 live_running = False
 
 
-
 @app.get("/", tags=["General"])
 def root():
     return {"message": "Suraksha AI v2.0 is running 🚀"}
@@ -506,7 +528,6 @@ def health():
         "rag_configured":   rag_ready,
         "email_configured": bool(ALERT_EMAIL_FROM),
     }
-
 
 
 @app.post("/signup", tags=["Auth"])
@@ -555,7 +576,6 @@ def me(current_user: User = Depends(get_current_user)):
     }
 
 
-
 @app.get("/analytics", tags=["Analytics"])
 def analytics(_current_user: User = Depends(get_current_user)):
     with state_lock:
@@ -584,7 +604,6 @@ def risk_summary(_current_user: User = Depends(get_current_user)):
         },
         "mitigation": state["mitigation_text"],
     }
-
 
 
 @app.get("/ai/explain", tags=["AI"])
@@ -636,7 +655,6 @@ def ai_status(_current_user: User = Depends(get_current_user)):
     }
 
 
-
 @app.get("/leaderboard", tags=["Analytics"])
 def leaderboard(_current_user: User = Depends(get_current_user)):
     with zone_tracker_lock:
@@ -654,7 +672,6 @@ def leaderboard(_current_user: User = Depends(get_current_user)):
     return zones
 
 
-
 @app.get("/zones", tags=["Analytics"])
 def get_zones(_current_user: User = Depends(get_current_user)):
     with zone_tracker_lock:
@@ -670,7 +687,6 @@ def get_zones(_current_user: User = Depends(get_current_user)):
         ]
     zones.sort(key=lambda z: z["risk_score"], reverse=True)
     return zones
-
 
 
 @app.get("/incidents", tags=["Analytics"])
@@ -695,7 +711,6 @@ def get_incidents(
         }
         for i in incidents
     ]
-
 
 
 @app.post("/event", tags=["Detection"])
@@ -789,7 +804,6 @@ async def detect_image(
     }
 
 
-
 @app.post("/detect/video", tags=["Detection"])
 async def detect_video(
     file: UploadFile = File(...),
@@ -874,7 +888,6 @@ async def detect_video(
     }
 
 
-
 def live_camera_loop():
     global live_running
     cap = cv2.VideoCapture(0)
@@ -949,7 +962,6 @@ def live_status(_current_user: User = Depends(get_current_user)):
         "active":      live_running,
         "event_count": latest_risk_state.get("total_events", 0),
     }
-
 
 
 @app.post("/simulator/start", tags=["Simulator"])
