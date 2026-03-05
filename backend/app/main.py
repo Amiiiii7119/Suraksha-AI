@@ -531,8 +531,8 @@ def health():
         llm_ready = _llm is not None
     return {
         "status":           "ok",
-        "ppe_model":        yolo.ppe_model is not None,
-        "fire_model":       yolo.fire_model is not None,
+        "ppe_model":        yolo.ppe_model is not None, # type: ignore
+        "fire_model":       yolo.fire_model is not None, # type: ignore
         "ai_configured":    llm_ready,
         "rag_configured":   rag_ready,
         "email_configured": bool(ALERT_EMAIL_FROM),
@@ -760,7 +760,7 @@ async def detect_image(
             shutil.copyfileobj(file.file, buffer)
 
         camera_id = "image_upload"
-        detections, annotated_b64 = yolo.run_detection(
+        detections, annotated_b64 = yolo.run_detection( # type: ignore
             temp_path, camera_id=camera_id, annotate=True
         )
         violations = []
@@ -844,7 +844,7 @@ async def detect_video(
             cv2.imwrite(frame_path, frame)
 
             do_annotate = not annotated_b64
-            detections, b64 = yolo.run_detection(
+            detections, b64 = yolo.run_detection( # type: ignore
                 frame_path,
                 camera_id=file.filename or "uploaded_video",
                 annotate=do_annotate,
@@ -915,7 +915,7 @@ def live_camera_loop():
 
         frame_path = "temp_live.jpg"
         cv2.imwrite(frame_path, frame)
-        detections, _ = yolo.run_detection(frame_path, camera_id="live_cam")
+        detections, _ = yolo.run_detection(frame_path, camera_id="live_cam") # type: ignore
         if os.path.exists(frame_path):
             os.remove(frame_path)
 
