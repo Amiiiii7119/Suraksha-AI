@@ -1,43 +1,41 @@
 pathway[xpack-llm-docs]==0.29.0
 
 fastapi>=0.116.1
-uvicorn[standard]==0.30.1
-python-multipart==0.0.9
+uvicorn[standard]
+python-multipart
 
-python-jose[cryptography]==3.3.0
-passlib[bcrypt]==1.7.4
+python-jose[cryptography]
+passlib[bcrypt]
 bcrypt==4.0.1
 
 sqlalchemy>=2.0.43
 pydantic>=2.9,<3.0
 pydantic-settings>=2.6.0
 
-litellm==1.40.14
-httpx==0.27.0
+litellm
+httpx
 aiohttp>=3.10.11
-aiofiles==23.2.1
+aiofiles
 
 torch
 torchvision
-ultralytics==8.2.48
-opencv-python-headless==4.10.0.84
+ultralytics
+opencv-python-headless
 
-sentence-transformers==2.7.0
-transformers==4.41.2
-tokenizers==0.19.1
+sentence-transformers
 
-pdf2image==1.17.0
+pdf2image
 
-python-dotenv==1.0.1
-Pillow==10.3.0
-numpy==1.26.4
-tiktoken==0.7.0
+python-dotenv
+Pillow
+numpy
+tiktoken
 
-python-dateutil==2.9.0.post0
-tqdm==4.66.4
-requests==2.32.3
-PyYAML==6.0.1
-packaging==24.0
-typing-extensions>=4.11.0
+python-dateutil
+tqdm
+requests
+PyYAML
+packaging
+typing-extensions
 
-psycopg2-binary==2.9.9
+psycopg2-binary
