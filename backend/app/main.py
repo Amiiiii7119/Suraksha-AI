@@ -401,7 +401,7 @@ Be urgent. Use exact counts from the data above."""
                 api_key=OPENROUTER_API_KEY,
                 api_base=OPENROUTER_BASE_URL,
                 messages=[{"role": "user", "content": prompt}],
-                max_tokens=800,
+                max_tokens=1000,
                 temperature=0.3,
             )
             choices = getattr(response, "choices", [])
