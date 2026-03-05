@@ -472,13 +472,22 @@ def create_default_admin():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    global yolo
+
     create_default_admin()
+
+    yolo = YoloEngine()
+    print("[STARTUP] YOLO engine loaded")
+
     threading.Thread(target=start_pathway, daemon=True).start()
-    print("[STARTUP] ✅ Pathway risk engine started.")
+    print("[STARTUP] Pathway risk engine started")
+
     threading.Thread(target=init_rag, daemon=True).start()
-    print("[STARTUP] ✅ Pathway LLM xPack RAG initialising...")
+    print("[STARTUP] RAG pipeline starting")
+
     start_simulator()
-    print("[STARTUP] ✅ Simulator started.")
+    print("[STARTUP] Simulator started")
+
     yield
     print("[SHUTDOWN] FastAPI shutting down.")
 
@@ -506,7 +515,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-yolo = YoloEngine()
+yolo = None
 live_running = False
 
 
@@ -978,4 +987,4 @@ def sim_stop(_current_user: User = Depends(get_current_user)):
 
 @app.get("/simulator/status", tags=["Simulator"])
 def sim_status(_current_user: User = Depends(get_current_user)):
-    return simulator_status()
+    return simulator_status() 
